@@ -1,0 +1,64 @@
+server {
+    listen 80;
+    listen [::]:80;
+    root /var/www/Pu-239/public;
+
+    index index.php;
+
+    server_name localhost;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /robots.txt {
+        access_log off;
+        add_header  Content-Type  text/plain;
+        return 200 "User-agent: *\nDisallow: /\n";
+    }
+
+    location ~* \.(gz|css|js|ogg|ogv|svg|svgz|eot|otf|woff|woff2|mp4|webm|htc|mp3|ttf|rss|atom|jpg|jpeg|gif|gifv|torrent|nfo|png|ico|cur|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)(\?ver=[0-9.]+)?$ {
+        expires max;
+        add_header Cache-Control "public";
+    }
+
+    location /images {
+        expires max;
+        access_log off;
+        log_not_found off;
+        add_header Cache-Control "public";
+    }
+
+    location /fonts {
+        expires max;
+        access_log off;
+        log_not_found off;
+        add_header Cache-Control "public";
+    }
+
+    location /images/proxy {
+        default_type image/jpeg;
+        expires max;
+        access_log off;
+        log_not_found off;
+        add_header Cache-Control "public";
+    }
+
+    # pass PHP scripts to FastCGI server
+    #
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+
+        # With php-fpm (or other unix sockets):
+        fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+        fastcgi_read_timeout 300;
+        # With php-cgi (or other tcp sockets):
+        #fastcgi_pass 127.0.0.1:9000;
+        #fastcgi_cache MYAPP;
+        #fastcgi_cache_valid 200 60m;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
