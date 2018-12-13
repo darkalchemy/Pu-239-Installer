@@ -90,13 +90,8 @@ alias la='ls -A'
 alias l='ls -CF'
 alias reload='source ~/.bashrc'
 alias flush='echo "flush_all" | nc localhost 11211'
-alias services='echo "flush_all" | nc localhost 11211; sudo service php5-fpm restart; sudo service nginx restart'
+alias services='sudo service php7.2-fpm restart; sudo service nginx restart'
 alias log='sudo nano /var/log/nginx/error.log'
-
-
-alias chromium='chromium-browser &'
-alias firefox='firefox &'
-alias deluge-gtk='deluge-gtk &'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -147,7 +142,7 @@ upinfo ()
 }
 
 function internip0 {
-    internip0=$(/sbin/ifconfig eth0 | grep -E 'inet.addr:[0-9]' | grep -v '127.0.0.1' | sed -e 's/addr://' | awk '{ print $2}')
+    internip0=$(/sbin/ifconfig eno1 | grep -E 'inet [0-9]' | grep -v '127.0.0.1' | sed -e 's/addr://' | awk '{ print $2}')
     echo " ${internip0}"
 }
 

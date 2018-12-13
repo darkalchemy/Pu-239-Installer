@@ -103,6 +103,8 @@ chmod 755 /var/log/nginx
 chown -R www-data:www-data /var/log/nginx
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tracker -O /etc/nginx/sites-available/tracker
 sed -i "s/root.*$/root \/var\/www\/$IPADDY\/;/" /etc/nginx/sites-available/tracker
+ln -s /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
 sed -i "s/localhost/$IPADDY/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
@@ -179,7 +181,7 @@ echo -e "${YELLOW}Now we download the Pu-239 Source Code into /var/www/$IPADDY..
 cd /var/www/
 git clone https://github.com/darkalchemy/Pu-239.git $IPADDY
 cd /var/www/$IPADDY/
-chown -R www-data:www-data /var/www/$IPADDY
+chown -R $SUDO_USER:www-data /var/www/$IPADDY
 
 clear
 echo -e "${YELLOW}Installed PPA's.$CLEAR"
