@@ -48,7 +48,7 @@ if [[ $IPADDY == "" ]]; then
     exit
 fi
 
-echo -e "${YELLOW}Installing PPA's...$CLEAR"
+echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
 apt-get install -yqq software-properties-common git
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
@@ -61,7 +61,7 @@ curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Updating your system before we begin...$CLEAR"
+echo -e "${YELLOW}Updating your system before we begin...\n\n$CLEAR"
 apt-get -yqq update
 apt-get -yqq upgrade
 
@@ -69,7 +69,7 @@ clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system before we begin.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing Percona XtraDB Server...$CLEAR"
+echo -e "${YELLOW}Installing Percona XtraDB Server...\n\n$CLEAR"
 rm -f $USER_HOME/.my.cnf
 export DEBIAN_FRONTEND=noninteractive
 apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona-server-server-5.7 percona-toolkit
@@ -97,7 +97,7 @@ echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system before we begin.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing Nginx...$CLEAR"
+echo -e "${YELLOW}Installing Nginx...\n\n$CLEAR"
 apt-get install -yqq nginx-extras
 mkdir -p /var/log/nginx
 chmod 755 /var/log/nginx
@@ -117,7 +117,7 @@ echo -e "${GREEN}Updated your system before we begin.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing PHP, PHP-FPM...$CLEAR"
+echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
 apt-get -yqq install -yqq php7.2 php7.2-fpm php7.2-dev php7.2-curl php7.2-json php7.2-mysql php-imagick php7.2-bz2 php7.2-common php7.2-xml php7.2-gd php7.2-mbstring php7.2-zip
 sed -i 's/;listen =.*$/listen = \/run\/php\/php7.2-fpm.sock/' /etc/php/7.2/fpm/pool.d/www.conf
 
@@ -128,7 +128,7 @@ echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing other, mostly needed, apps...$CLEAR"
+echo -e "${YELLOW}Installing other, mostly needed, apps...\n\n$CLEAR"
 apt-get -yqq install unzip htop tmux rar unrar jpegoptim optipng pngquant gifsicle imagemagick
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/my.cnf -O $USER_HOME/temp.conf
 cat $USER_HOME/temp.conf >> /etc/mysql/percona-server.conf.d/mysqld.cnf
@@ -149,7 +149,7 @@ echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing composer...$CLEAR"
+echo -e "${YELLOW}Installing composer...\n\n$CLEAR"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
@@ -165,7 +165,7 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing Node.js...$CLEAR"
+echo -e "${YELLOW}Installing Node.js...\n\n$CLEAR"
 sudo apt-get install -yqq nodejs
 
 clear
@@ -178,7 +178,7 @@ echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Now we download the Pu-239 Source Code into /var/www/$IPADDY...$CLEAR"
+echo -e "${YELLOW}Now we download the Pu-239 Source Code into /var/www/$IPADDY...\n\n$CLEAR"
 cd /var/www/
 git clone https://github.com/darkalchemy/Pu-239.git $IPADDY
 service mysql restart
@@ -211,9 +211,11 @@ rm /var/www/$IPADDY/public/install
 mysql $DBNAME < /var/www/$IPADDY/database/trivia.php.sql
 mysql $DBNAME < /var/www/$IPADDY/database/tvmaze.php.sql
 mysql $DBNAME < /var/www/$IPADDY/database/images.php.sql
+cd /var/www/$IPADDY
+php bin/set_perms.php
+sudo -u $SUDO_USER php bin/uglify
 
 clear
-
 echo -e "${YELLOW}/var/www/$IPADDY/public/install has been removed.$CLEAR"
 echo -e "${YELLOW}Now, add yourself to the site by going to http://${IPADDY}/signup.php to create a new user.$CLEAR"
 
