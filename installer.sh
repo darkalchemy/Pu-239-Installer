@@ -59,16 +59,16 @@ rm -f percona-release_0.1-6.$(lsb_release -sc)_all.deb
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Updating your system before we begin...$CLEAR"
 apt-get -yqq update
 apt-get -yqq upgrade
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Percona XtraDB Server...$CLEAR"
 rm -f $USER_HOME/.my.cnf
 export DEBIAN_FRONTEND=noninteractive
@@ -76,7 +76,8 @@ apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona
 unset DEBIAN_FRONTEND
 mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$PASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
 
-echo -e "${YELLOW}Set the root password to the same as you set in the config.$CLEAR"
+clear
+echo -e "${RED}Set the root password to the same as you set in the config.$CLEAR"
 mysql_secure_installation
 mysql -uroot "-e ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$ROOTPASSWORD';"
 echo -e "${YELLOW}Creating .my.cnf$CLEAR"
@@ -92,17 +93,17 @@ chmod 600 $USER_HOME/.my.cnf
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.my.cnf
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Nginx...$CLEAR"
 apt-get install -yqq nginx-extras
 mkdir -p /var/log/nginx
 chmod 755 /var/log/nginx
 chown -R www-data:www-data /var/log/nginx
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tracker -O /etc/nginx/sites-available/tracker
-sed -i "s/root.*$/root \/var\/www\/$IPADDY\/;/" /etc/nginx/sites-available/tracker
+sed -i "s/root.*$/root \/var\/www\/$IPADDY\/public\/;/" /etc/nginx/sites-available/tracker
 ln -s /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 sed -i "s/localhost/$IPADDY/" /etc/nginx/sites-available/tracker
@@ -111,22 +112,22 @@ CORES=`cat /proc/cpuinfo | grep processor | wc -l`
 sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Installed Nginx.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...$CLEAR"
 apt-get -yqq install -yqq php7.2 php7.2-fpm php7.2-dev php7.2-curl php7.2-json php7.2-mysql php-imagick php7.2-bz2 php7.2-common php7.2-xml php7.2-gd php7.2-mbstring php7.2-zip
 sed -i 's/;listen =.*$/listen = \/run\/php\/php7.2-fpm.sock/' /etc/php/7.2/fpm/pool.d/www.conf
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Installed Nginx.$CLEAR"
-echo -e "${YELLOW}Installed PHP, PHP-FPM.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing other, mostly needed, apps...$CLEAR"
 apt-get -yqq install unzip htop tmux rar unrar jpegoptim optipng pngquant gifsicle imagemagick
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/my.cnf -O $USER_HOME/temp.conf
@@ -141,13 +142,13 @@ sed -i -e 's/^# set historylog/set historylog/' $USER_HOME/.nanorc
 ln -sf $USER_HOME/.nanorc /root/
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Installed Nginx.$CLEAR"
-echo -e "${YELLOW}Installed PHP, PHP-FPM.$CLEAR"
-echo -e "${YELLOW}Installed other, mostly needed, apps.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing composer...$CLEAR"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
@@ -156,44 +157,50 @@ php -r "unlink('composer-setup.php');"
 mv composer.php $USER_HOME/bin/composer
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Installed Nginx.$CLEAR"
-echo -e "${YELLOW}Installed PHP, PHP-FPM.$CLEAR"
-echo -e "${YELLOW}Installed other, mostly needed, apps.$CLEAR"
-echo -e "${YELLOW}Installed composer.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Node.js...$CLEAR"
 sudo apt-get install -yqq nodejs
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Installed Nginx.$CLEAR"
-echo -e "${YELLOW}Installed PHP, PHP-FPM.$CLEAR"
-echo -e "${YELLOW}Installed other, mostly needed, apps.$CLEAR"
-echo -e "${YELLOW}Installed composer.$CLEAR"
-echo -e "${YELLOW}Installed Node.js.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now we download the Pu-239 Source Code into /var/www/$IPADDY...$CLEAR"
 cd /var/www/
 git clone https://github.com/darkalchemy/Pu-239.git $IPADDY
-cd /var/www/$IPADDY/
+service mysql restart
+service php7.2-fpm restart
+service nginx restart
+cd /var/www/$IPADDY
 chown -R $SUDO_USER:www-data /var/www/$IPADDY
+sudo -u $SUDO_USER $USER_HOME/bin/composer install
+sudo -u $SUDO_USER npm install
+chown -R www-data:www-data /var/www/$IPADDY
 
 clear
-echo -e "${YELLOW}Installed PPA's.$CLEAR"
-echo -e "${YELLOW}Updated your system before we begin.$CLEAR"
-echo -e "${YELLOW}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${YELLOW}Installed Nginx.$CLEAR"
-echo -e "${YELLOW}Installed PHP, PHP-FPM.$CLEAR"
-echo -e "${YELLOW}Installed other, mostly needed, apps.$CLEAR"
-echo -e "${YELLOW}Installed composer.$CLEAR"
-echo -e "${YELLOW}Installed Node.js.$CLEAR"
-echo -e "${YELLOW}We downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
-echo -e "${YELLOW}Done.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}We downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now you need to point your browser to http://${IPADDY}/install/"
 echo -e "and complete the site installation process.$CLEAR"
 read -p "
@@ -214,30 +221,25 @@ clear
 echo -e "${YELLOW}The installation of Pu-239 completed successfully.$CLEAR"
 echo -e "${YELLOW}Follow the rest of the steps in the README:
 
-${GREEN}composer install
-npm install
-
 ${RED}# set permissions and create necessary files
-${GREEN}[sudo] php bin/set_perms.php
-php bin/uglify.php
 
 ${RED}# add cron job to root cron for running cleanup, please change path as needed
 ${GREEN}sudo crontab -e
 
 ${RED}### No logging
 ${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
-* * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/Pu-239/include/cron_controller.php" >/dev/null 2>&1
+* * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/cron_controller.php" >/dev/null 2>&1
 
 # this can take several minutes to run, especially the first time, so we run it separate
 # runs images_update.php every 30 minutes, if not already running, as user www-data
-*/30 * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/Pu-239/include/images_update.php" >/dev/null 2>&1
+*/30 * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/images_update.php" >/dev/null 2>&1
 
 ${RED}### logging
 ${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
-* * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/Pu-239/include/cron_controller.php" >> /var/log/nginx/cron_`date +\%Y\%m\%d`.log 2>&1
+* * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/cron_controller.php" >> /var/log/nginx/cron_`date +\%Y\%m\%d`.log 2>&1
 
 # this can take several minutes to run, especially the first time, so we run it separate
 # runs images_update.php every 30 minutes, if not already running, as user www-data
-*/30 * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/Pu-239/include/images_update.php" >> /var/log/nginx/images_`date +\%Y\%m\%d`.log 2>&1
+*/30 * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/images_update.php" >> /var/log/nginx/images_`date +\%Y\%m\%d`.log 2>&1
 $CLEAR"
 
