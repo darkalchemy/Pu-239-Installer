@@ -205,15 +205,15 @@ echo -e "${YELLOW}Now you need to point your browser to http://${IPADDY}/install
 echo -e "and complete the site installation process.$CLEAR"
 read -p "
 Once you have completed the above steps, press any key to continue:
-"
--n 1 -r
-rm /var/www/$IPADDY/public/install
+" -n 1 -r
+
+rm -r /var/www/$IPADDY/public/install
 mysql $DBNAME < /var/www/$IPADDY/database/trivia.php.sql
 mysql $DBNAME < /var/www/$IPADDY/database/tvmaze.php.sql
 mysql $DBNAME < /var/www/$IPADDY/database/images.php.sql
 cd /var/www/$IPADDY
 php bin/set_perms.php
-sudo -u $SUDO_USER php bin/uglify
+sudo -u $SUDO_USER php bin/uglify.php
 
 clear
 echo -e "${YELLOW}/var/www/$IPADDY/public/install has been removed.$CLEAR"
