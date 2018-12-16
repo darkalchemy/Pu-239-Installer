@@ -9,6 +9,8 @@ To use:
 ```
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/installer.sh -O installer.sh
 chmod a+x installer.sh
-nano installer.sh #edit the first few lines
+nano installer.sh #edit the first few lines. Please remember pay attention to what you use as you will use these again.
 sudo ./installer.sh
 ```
+
+Also, note that since Pu-239 defaults to using the file system as cache, redis, memcached and apcu are not installed by this script.

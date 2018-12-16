@@ -199,36 +199,111 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
-echo -e "${GREEN}We downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now you need to point your browser to http://${IPADDY}/install/"
-echo -e "and complete the site installation process.$CLEAR"
+echo -e "and complete the site installation process."
+echo -e "Please stop when you get here -> http://${IPADDY}/signup.php.$CLEAR"
 read -p "
 Once you have completed the above steps, press any key to continue:
 " -n 1 -r
 
-rm -r /var/www/$IPADDY/public/install
+clear
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Site installation completed.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
+echo -e "${YELLOW}Importing trivia, tvmaze and images databases.$CLEAR"
 mysql $DBNAME < /var/www/$IPADDY/database/trivia.php.sql
 mysql $DBNAME < /var/www/$IPADDY/database/tvmaze.php.sql
 mysql $DBNAME < /var/www/$IPADDY/database/images.php.sql
+
+clear
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Site installation completed.$CLEAR"
+echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
+echo -e "${YELLOW}Setting correct permissions and ownership.$CLEAR"
 cd /var/www/$IPADDY
+chown -R $SUDO_USER:www-data /var/www/$IPADDY
 php bin/set_perms.php
+
+clear
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Site installation completed.$CLEAR"
+echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
+echo -e "${YELLOW}Creating, merging, minifying and gzipping css and js files.$CLEAR"
 sudo -u $SUDO_USER php bin/uglify.php
 
 clear
-echo -e "${YELLOW}/var/www/$IPADDY/public/install has been removed.$CLEAR"
-echo -e "${YELLOW}Now, add yourself to the site by going to http://${IPADDY}/signup.php to create a new user.$CLEAR"
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Site installation completed.$CLEAR"
+echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
+echo -e "${GREEN}Creating, merging, minifying and gzipping css and js files.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
+echo -e "${YELLOW}Removing /var/www/$IPADDY/public/install.$CLEAR"
+rm -r /var/www/$IPADDY/public/install
 
 clear
-echo -e "${YELLOW}The installation of Pu-239 completed successfully.$CLEAR"
-echo -e "${YELLOW}Follow the rest of the steps in the README:
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Site installation completed.$CLEAR"
+echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
+echo -e "${GREEN}Creating, merging, minifying and gzipping css and js files.$CLEAR"
+echo -e "${GREEN}Removed /var/www/$IPADDY/public/install.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
 
-${RED}# set permissions and create necessary files
+clear
+echo -e "${GREEN}The installation of Pu-239 completed successfully.$CLEAR"
+echo -e "${YELLOW}Now, add yourself to the site by going to http://${IPADDY}/signup.php to create a new user.$CLEAR"
+echo -e "${YELLOW}Then, Follow the rest of the steps in the README:
 
-${RED}# add cron job to root cron for running cleanup, please change path as needed
+${RED}# add cron job to root cron for running cleanup
 ${GREEN}sudo crontab -e
 
-${RED}### No logging
+${RED}### Use this if you DO NOT need any logging for these scripts
 ${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
 * * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/cron_controller.php" >/dev/null 2>&1
 
@@ -236,7 +311,7 @@ ${GREEN}# runs cron_controller.php every minute, if not already running, as user
 # runs images_update.php every 30 minutes, if not already running, as user www-data
 */30 * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/images_update.php" >/dev/null 2>&1
 
-${RED}### logging
+${RED}### Use this if you DO need any logging for these scripts
 ${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
 * * * * * su www-data -s /bin/bash -c "/usr/bin/php /var/www/${IPADDY}/include/cron_controller.php" >> /var/log/nginx/cron_`date +\%Y\%m\%d`.log 2>&1
 
