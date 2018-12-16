@@ -49,7 +49,7 @@ if [[ $IPADDY == "" ]]; then
 fi
 
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
-apt-get install -yqq software-properties-common git
+apt-get install -yqq software-properties-common git curl
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
