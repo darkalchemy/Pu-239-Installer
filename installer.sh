@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 #CONFIG - these must be set
-USERNAME=""		   #username for mysql
-PASS=""			   #password for mysql user
-DBNAME=""		   #database name
-ROOTPASSWORD=""    # mysql root user password, this is needed to fix login by root user
-IPADDY=""		   #fully qualified domain name or routable ip
+USERNAME=""         #username for mysql
+PASS=""             #password for mysql user
+DBNAME=""           #database name
+ROOTPASSWORD=""     # mysql root user password, this is needed to fix login by root user
+IPADDY=""           #fully qualified domain name or routable ip
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
