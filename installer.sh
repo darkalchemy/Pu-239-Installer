@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -e
 #CONFIG - these must be set
 USERNAME=""         #username for mysql
 PASS=""             #password for mysql user
@@ -50,6 +51,7 @@ if [[ $IPADDY == "" ]]; then
     exit
 fi
 
+clear
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
 apt-get install -yqq software-properties-common git curl net-tools
 add-apt-repository -y ppa:nginx/stable
@@ -79,7 +81,7 @@ unset DEBIAN_FRONTEND
 mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$PASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
 
 clear
-echo -e "${RED}Set the root password to the same as you set in the config.$CLEAR"
+echo -e "${RED}Set the root password to the same as you set in the config.\n\n$CLEAR"
 mysql_secure_installation
 mysql -uroot "-e ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$ROOTPASSWORD';"
 echo -e "${YELLOW}Creating .my.cnf$CLEAR"
@@ -106,8 +108,8 @@ chmod 755 /var/log/nginx
 chown -R www-data:www-data /var/log/nginx
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tracker -O /etc/nginx/sites-available/tracker
 sed -i "s/root.*$/root \/var\/www\/$IPADDY\/public\/;/" /etc/nginx/sites-available/tracker
-ln -s /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
+ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
 sed -i "s/localhost/$IPADDY/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
@@ -146,6 +148,7 @@ cat $USER_HOME/temp.conf >> /etc/mysql/percona-server.conf.d/mysqld.cnf
 rm $USER_HOME/temp.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tmux.conf -O $USER_HOME/.tmux.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/bashrc -O $USER_HOME/.bashrc
+source $USER_HOME/.bashrc
 cp /etc/nanorc $USER_HOME/.nanorc
 sed -i -e 's/^# include/include/' $USER_HOME/.nanorc
 sed -i -e 's/^# set tabsize 8/set tabsize 4/' $USER_HOME/.nanorc
@@ -155,6 +158,7 @@ chown $SUDO_USER:$SUDO_USER $USER_HOME/.tmux.conf
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.bashrc
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.nanorc
 ln -sf $USER_HOME/.nanorc /root/
+ln -sf $USER_HOME/.bashrc /root/
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -169,7 +173,7 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
-mkdir $USER_HOME/bin/
+mkdir -p $USER_HOME/bin/
 mv $USER_HOME/composer.phar $USER_HOME/bin/composer
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.composer
 chown $SUDO_USER:$SUDO_USER $USER_HOME/bin
@@ -197,13 +201,14 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now we download the Pu-239 Source Code into /var/www/$IPADDY...\n\n$CLEAR"
 cd /var/www/
+rm -fr /var/www/$IPADDY
 git clone https://github.com/darkalchemy/Pu-239.git $IPADDY
 service mysql restart
 service php7.2-fpm restart
 service nginx restart
 cd /var/www/$IPADDY
 chown -R $SUDO_USER:www-data /var/www/$IPADDY
-sudo -u $SUDO_USER $USER_HOME/bin/composer install
+$USER_HOME/bin/composer install
 sudo -u $SUDO_USER npm install
 chown -R www-data:www-data /var/www/$IPADDY
 
@@ -293,7 +298,7 @@ echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
 echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Removing /var/www/$IPADDY/public/install.$CLEAR"
-rm -r /var/www/$IPADDY/public/install
+rm -fr /var/www/$IPADDY/public/install
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
