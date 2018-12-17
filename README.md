@@ -16,3 +16,5 @@ sudo ./installer.sh
 ```
 
 Also, note that since Pu-239 defaults to using the file system as cache, redis, memcached and apcu are not installed by this script.
+
+If you like this project, please consider supporting me on [Patreon](https://www.patreon.com/user?u=15795177) 
