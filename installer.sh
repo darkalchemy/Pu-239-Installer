@@ -22,6 +22,8 @@ if [[ $EUID -ne 0 && whoami != $SUDO_USER && whoami != 'root' ]]; then
 fi
 
 export USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+usermod -a -G www-data $SUDO_USER
+usermod -a -G $SUDO_USER www-data
 
 if [[ $USERNAME == "" ]]; then
     echo -e "${RED}You must fill in the username"
@@ -49,7 +51,7 @@ if [[ $IPADDY == "" ]]; then
 fi
 
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
-apt-get install -yqq software-properties-common git curl
+apt-get install -yqq software-properties-common git curl net-tools
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
@@ -67,7 +69,7 @@ apt-get -yqq upgrade
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Percona XtraDB Server...\n\n$CLEAR"
 rm -f $USER_HOME/.my.cnf
@@ -94,7 +96,7 @@ chown $SUDO_USER:$SUDO_USER $USER_HOME/.my.cnf
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Nginx...\n\n$CLEAR"
@@ -110,10 +112,20 @@ sed -i "s/localhost/$IPADDY/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
 sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
+if getent group www-data | grep &>/dev/null "\b${SUDO_USER}\b"; then
+    echo -e "${GREEN}$SUDO_USER is a member the www-data group.$CLEAR"
+else
+    echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
+    usermod -a -G www-data $SUDO_USER
+    usermod -a -G $SUDO_USER www-data
+    echo -e "${GREEN}Adding $SUDO_USER to the www-data group.$CLEAR"
+    echo -e "${RED}Please logout/login and restart this script.$CLEAR"
+    exit
+fi
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
@@ -123,7 +135,7 @@ sed -i 's/;listen =.*$/listen = \/run\/php\/php7.2-fpm.sock/' /etc/php/7.2/fpm/p
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -139,11 +151,15 @@ cp /etc/nanorc $USER_HOME/.nanorc
 sed -i -e 's/^# include/include/' $USER_HOME/.nanorc
 sed -i -e 's/^# set tabsize 8/set tabsize 4/' $USER_HOME/.nanorc
 sed -i -e 's/^# set historylog/set historylog/' $USER_HOME/.nanorc
+sed -i -e 's/^# set tabstospaces/set tabstospaces/' $USER_HOME/.nanorc
+chown $SUDO_USER:$SUDO_USER $USER_HOME/.tmux.conf
+chown $SUDO_USER:$SUDO_USER $USER_HOME/.bashrc
+chown $SUDO_USER:$SUDO_USER $USER_HOME/.nanorc
 ln -sf $USER_HOME/.nanorc /root/
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -154,11 +170,13 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
-mv composer.php $USER_HOME/bin/composer
-
+mkdir $USER_HOME/bin/
+mv $USER_HOME/composer.phar $USER_HOME/bin/composer
+chown $SUDO_USER:$SUDO_USER $USER_HOME/.composer
+chown $SUDO_USER:$SUDO_USER $USER_HOME/bin
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -170,7 +188,7 @@ sudo apt-get install -yqq nodejs
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -192,7 +210,7 @@ chown -R www-data:www-data /var/www/$IPADDY
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -210,7 +228,7 @@ Once you have completed the above steps, press any key to continue:
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -227,7 +245,7 @@ mysql $DBNAME < /var/www/$IPADDY/database/images.php.sql
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -245,7 +263,7 @@ php bin/set_perms.php
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -262,7 +280,7 @@ sudo -u $SUDO_USER php bin/uglify.php
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -280,7 +298,7 @@ rm -r /var/www/$IPADDY/public/install
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we begin.$CLEAR"
+echo -e "${GREEN}Updated your system before we began.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
