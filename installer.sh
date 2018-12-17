@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 #CONFIG - these must be set
-USERNAME=""		   #username for mysql
-PASS=""			   #password for mysql user
-DBNAME=""		   #database name
-ROOTPASSWORD=""    # mysql root user password, this is needed to fix login by root user
-IPADDY=""		   #fully qualified domain name or routable ip
+USERNAME=""         #username for mysql
+PASS=""             #password for mysql user
+DBNAME=""           #database name
+ROOTPASSWORD=""     # mysql root user password, this is needed to fix login by root user
+IPADDY=""           #fully qualified domain name or routable ip
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
@@ -255,8 +255,25 @@ echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Setting correct permissions and ownership.$CLEAR"
+echo -e "${YELLOW}Creating, merging, minifying and gzipping css and js files.$CLEAR"
 cd /var/www/$IPADDY
+php bin/uglify.php
+
+clear
+echo -e "${GREEN}Installed PPA's.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
+echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed Nginx.$CLEAR"
+echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
+echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
+echo -e "${GREEN}Installed composer.$CLEAR"
+echo -e "${GREEN}Installed Node.js.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
+echo -e "${GREEN}Site installation completed.$CLEAR"
+echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
+echo -e "${GREEN}Done.$CLEAR"
+echo -e "${YELLOW}Setting correct permissions and ownership.$CLEAR"
 chown -R $SUDO_USER:www-data /var/www/$IPADDY
 php bin/set_perms.php
 
@@ -272,25 +289,8 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
 echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
-echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Creating, merging, minifying and gzipping css and js files.$CLEAR"
-sudo -u $SUDO_USER php bin/uglify.php
-
-clear
-echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
-echo -e "${GREEN}Installed Nginx.$CLEAR"
-echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
-echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
-echo -e "${GREEN}Installed composer.$CLEAR"
-echo -e "${GREEN}Installed Node.js.$CLEAR"
-echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
-echo -e "${GREEN}Site installation completed.$CLEAR"
-echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
-echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
-echo -e "${GREEN}Creating, merging, minifying and gzipping css and js files.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Removing /var/www/$IPADDY/public/install.$CLEAR"
 rm -r /var/www/$IPADDY/public/install
@@ -307,8 +307,8 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
+echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
 echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
-echo -e "${GREEN}Creating, merging, minifying and gzipping css and js files.$CLEAR"
 echo -e "${GREEN}Removed /var/www/$IPADDY/public/install.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 
