@@ -115,7 +115,7 @@ sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
 echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
 usermod -a -G www-data $SUDO_USER
 usermod -a -G $SUDO_USER www-data
-if [[ getent group www-data | grep &>/dev/null "\b${SUDO_USER}\b" ]]; then
+if getent group www-data | grep &>/dev/null "\b${SUDO_USER}\b"; then
     echo -e "${GREEN}$SUDO_USER is a member the www-data group.$CLEAR"
 else
     echo -e "${RED}Please logout/login and restart this script.$CLEAR"
