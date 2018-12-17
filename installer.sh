@@ -69,7 +69,7 @@ apt-get -yqq upgrade
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Percona XtraDB Server...\n\n$CLEAR"
 rm -f $USER_HOME/.my.cnf
@@ -96,7 +96,7 @@ chown $SUDO_USER:$SUDO_USER $USER_HOME/.my.cnf
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Nginx...\n\n$CLEAR"
@@ -112,20 +112,19 @@ sed -i "s/localhost/$IPADDY/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
 sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
-if getent group www-data | grep &>/dev/null "\b${SUDO_USER}\b"; then
+echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
+usermod -a -G www-data $SUDO_USER
+usermod -a -G $SUDO_USER www-data
+if [[ getent group www-data | grep &>/dev/null "\b${SUDO_USER}\b" ]]; then
     echo -e "${GREEN}$SUDO_USER is a member the www-data group.$CLEAR"
 else
-    echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
-    usermod -a -G www-data $SUDO_USER
-    usermod -a -G $SUDO_USER www-data
-    echo -e "${GREEN}Adding $SUDO_USER to the www-data group.$CLEAR"
     echo -e "${RED}Please logout/login and restart this script.$CLEAR"
     exit
 fi
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
@@ -135,7 +134,7 @@ sed -i 's/;listen =.*$/listen = \/run\/php\/php7.2-fpm.sock/' /etc/php/7.2/fpm/p
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -159,7 +158,7 @@ ln -sf $USER_HOME/.nanorc /root/
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -176,7 +175,7 @@ chown $SUDO_USER:$SUDO_USER $USER_HOME/.composer
 chown $SUDO_USER:$SUDO_USER $USER_HOME/bin
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -188,7 +187,7 @@ sudo apt-get install -yqq nodejs
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -210,7 +209,7 @@ chown -R www-data:www-data /var/www/$IPADDY
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -221,14 +220,14 @@ echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$IPADDY.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now you need to point your browser to http://${IPADDY}/install/"
 echo -e "and complete the site installation process."
-echo -e "Please stop when you get here -> http://${IPADDY}/signup.php.$CLEAR"
+echo -e "${RED}Please stop when you get here -> http://${IPADDY}/signup.php.$CLEAR"
 read -p "
 Once you have completed the above steps, press any key to continue:
 " -n 1 -r
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -245,7 +244,7 @@ mysql $DBNAME < /var/www/$IPADDY/database/images.php.sql
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -263,7 +262,7 @@ php bin/set_perms.php
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -280,7 +279,7 @@ sudo -u $SUDO_USER php bin/uglify.php
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
@@ -298,7 +297,7 @@ rm -r /var/www/$IPADDY/public/install
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
-echo -e "${GREEN}Updated your system before we began.$CLEAR"
+echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
