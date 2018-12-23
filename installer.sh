@@ -131,7 +131,7 @@ echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
-apt-get -yqq install -yqq php7.2 php7.2-fpm php7.2-dev php7.2-curl php7.2-json php7.2-mysql php-imagick php7.2-bz2 php7.2-common php7.2-xml php7.2-gd php7.2-mbstring php7.2-zip
+apt-get -yqq install php7.2 php7.2-fpm php7.2-dev php7.2-curl php7.2-json php7.2-mysql php-imagick php7.2-bz2 php7.2-common php7.2-xml php7.2-gd php7.2-mbstring php7.2-zip
 sed -i 's/;listen =.*$/listen = \/run\/php\/php7.2-fpm.sock/' /etc/php/7.2/fpm/pool.d/www.conf
 
 clear
@@ -187,7 +187,7 @@ echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Node.js...\n\n$CLEAR"
-sudo apt-get install -yqq nodejs
+sudo apt-get -yqq install nodejs
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
