@@ -15,6 +15,11 @@ ADMINUSERNAME=''    # your first users username
 ADMINPASS=''        # your first users password
 ADMINEMAIL=''       # your first users email
 PHPVER='7.2'        # can be 7.2 or 7.3
+MEMCACHED=false     # install memcached true/false
+REDIS=false         # install redis-server true/false
+APCU=false          # install APCu true/false
+DBFLAVOR='Percona'  # install either Percona or MariaDB
+GOACCESS=false      # install goaccess access log analyzer
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
@@ -100,10 +105,19 @@ apt-get install -yqq software-properties-common git curl net-tools
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
-wget -q https://repo.percona.com/apt/percona-release_0.1-6.$(lsb_release -sc)_all.deb
-dpkg -i percona-release_0.1-6.$(lsb_release -sc)_all.deb
-rm -f percona-release_0.1-6.$(lsb_release -sc)_all.deb
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+if [[ $DBFLAVOR == 'Percona' ]]; then
+    wget -q https://repo.percona.com/apt/percona-release_0.1-6.$(lsb_release -sc)_all.deb
+    dpkg -i percona-release_0.1-6.$(lsb_release -sc)_all.deb
+    rm -f percona-release_0.1-6.$(lsb_release -sc)_all.deb
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+elif [[ $DBFLAVOR == 'MariaDB' ]]; then
+    apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
+    add-apt-repository -y 'deb [arch=amd64,arm64,ppc64el] http://ftp.osuosl.org/pub/mariadb/repo/10.3/ubuntu bionic main'
+else
+    echo -e "${RED}You must set the DB Flavor to either Percona or MariaDB"
+    exit
+fi
+
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -119,7 +133,17 @@ echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Percona XtraDB Server...\n\n$CLEAR"
 rm -f $USER_HOME/.my.cnf
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona-server-server-5.7 percona-toolkit
+if [[ $DBFLAVOR == 'Percona' ]]; then
+    apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona-server-server-5.7 percona-toolkit
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/percona.cnf -O $USER_HOME/temp.conf
+    cat $USER_HOME/temp.conf >> /etc/mysql/percona-server.conf.d/mysqld.cnf
+    rm $USER_HOME/temp.conf
+elif [[ $DBFLAVOR == 'MariaDB' ]]; then
+    apt-get install -yqq mariadb-server
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mariadb.cnf -O $USER_HOME/temp.conf
+    cat $USER_HOME/temp.conf >> /etc/mysql//my.cnf
+    rm $USER_HOME/temp.conf
+fi
 unset DEBIAN_FRONTEND
 mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
 
@@ -179,6 +203,25 @@ echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
 apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip
 sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 
+if [[ "$MEMCACHED" = true ]]; then
+    apt-get -yqq install php-memcached memcached
+fi
+
+if [[ "$REDIS" = true ]]; then
+    apt-get -yqq install php-redis redis-server
+fi
+
+if [[ "$APCU" = true ]]; then
+    apt-get -yqq install php-apcu
+fi
+
+if [[ "$GOACCESS" = true ]]; then
+    echo "deb http://deb.goaccess.io/ $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list.d/goaccess.list
+    wget -O - https://deb.goaccess.io/gnugpg.key | sudo apt-key add -
+    apt-get -yqq update
+    apt-get -yqq install goaccess
+fi
+
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
@@ -188,9 +231,6 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing other, mostly needed, apps...\n\n$CLEAR"
 apt-get -yqq install unzip htop tmux rar unrar jpegoptim optipng pngquant gifsicle imagemagick
-wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/my.cnf -O $USER_HOME/temp.conf
-cat $USER_HOME/temp.conf >> /etc/mysql/percona-server.conf.d/mysqld.cnf
-rm $USER_HOME/temp.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tmux.conf -O $USER_HOME/.tmux.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/bashrc -O $USER_HOME/.bashrc
 sed -i -e "s/PHPVERSION/${PHPVER}/" $USER_HOME/.bashrc
