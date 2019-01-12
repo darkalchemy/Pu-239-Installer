@@ -177,7 +177,7 @@ echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
 apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip
-sed -i 's/;listen =.*$/listen = \/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
+sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -320,6 +320,9 @@ echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
 echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
 echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
+
+## Delete site cache, probably owned by root
+rm -r /dev/shm/$DBNAME
 
 clear
 echo -e "${GREEN}The installation of Pu-239 completed successfully.$CLEAR"
