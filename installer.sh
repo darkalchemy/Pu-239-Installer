@@ -157,7 +157,7 @@ ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
 sed -i "s/localhost/$SITEHTTP/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
-CORES = "$(($CORES * 2))"
+CORES=`expr 2 \* $CORES`
 sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
 echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
 usermod -a -G www-data $SUDO_USER
