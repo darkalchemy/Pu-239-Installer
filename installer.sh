@@ -205,10 +205,18 @@ sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/ph
 
 if [[ "$MEMCACHED" = true ]]; then
     apt-get -yqq install php-memcached memcached
+    sudo usermod -a -G memcache www-data
+    sudo usermod -a -G www-data memcache
+    sudo usermod -a -G memcache $USER
+    sudo usermod -a -G $USER memcache
 fi
 
 if [[ "$REDIS" = true ]]; then
     apt-get -yqq install php-redis redis-server
+    sudo usermod -a -G redis www-data
+    sudo usermod -a -G www-data redis
+    sudo usermod -a -G redis $USER
+    sudo usermod -a -G $USER redis
 fi
 
 if [[ "$APCU" = true ]]; then
