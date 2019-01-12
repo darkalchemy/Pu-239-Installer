@@ -6,7 +6,7 @@ SITENAME=''         # the name that will be displayed throughout your site as th
 SITEHTTP=''         # fully qualified domain name, do not include http://
 SITESSL=''          # fully qualified domain name, do not include https://
 USERNAME=''         # username for mysql
-PASS=''             # password for mysql user
+DBPASS=''             # password for mysql user
 DBNAME=''           # database name
 ROOTPASSWORD=''     # mysql root user password, this is needed to fix login by root user
 BOTNAME=''          # username for your site bot
@@ -23,7 +23,7 @@ CLEAR="\033[00m"
 if [[ $EUID -ne 0 && whoami != $SUDO_USER && whoami != 'root' ]]; then
 	export script=`basename $0`
 	echo
-	echo -e "${RED}You must run this script as a user using
+	echo -e "${RED}You must run this script as a non-privileged user with sudo like:
 	sudo ./${script}\033[0m" 1>&2
 	echo
 	exit
@@ -53,7 +53,7 @@ if [[ $USERNAME == "" ]]; then
     exit
 fi
 
-if [[ $PASS == "" ]]; then
+if [[ $DBPASS == "" ]]; then
     echo -e "${RED}You must fill in the password"
     exit
 fi
@@ -120,7 +120,7 @@ rm -f $USER_HOME/.my.cnf
 export DEBIAN_FRONTEND=noninteractive
 apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona-server-server-5.7 percona-toolkit
 unset DEBIAN_FRONTEND
-mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$PASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
+mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
 
 clear
 echo -e "${RED}Set the root password to the same as you set in the config.\n\n$CLEAR"
@@ -129,11 +129,11 @@ mysql -uroot "-e ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_pass
 echo -e "${YELLOW}Creating .my.cnf$CLEAR"
 echo "[client]
 user=$USERNAME
-password=$PASS
+password=$DBPASS
 
 [mysql]
 user=$USERNAME
-password=$PASS
+password=$DBPASS
 " > $USER_HOME/.my.cnf
 chmod 600 $USER_HOME/.my.cnf
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.my.cnf
@@ -266,7 +266,7 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$SITEHTTP.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing your site.$CLEAR"
-php bin/install.php install "$SITENAME" "$SITEHTTP" "$SITESSL" "$DBNAME" "$USERNAME" "$PASS" "$BOTNAME" "$SITEEMAIL" "$ADMINUSERNAME" "$ADMINPASS" "$ADMINEMAIL"
+php bin/install.php install "$SITENAME" "$SITEHTTP" "$SITESSL" "$DBNAME" "$USERNAME" "$DBPASS" "$BOTNAME" "$SITEEMAIL" "$ADMINUSERNAME" "$ADMINPASS" "$ADMINEMAIL"
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
