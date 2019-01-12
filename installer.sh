@@ -130,8 +130,9 @@ clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Installing Percona XtraDB Server...\n\n$CLEAR"
+echo -e "${YELLOW}Installing ${DBFLAVOR} Server...\n\n$CLEAR"
 rm -f $USER_HOME/.my.cnf
+rm -f $USER_HOME/.mytop
 export DEBIAN_FRONTEND=noninteractive
 if [[ $DBFLAVOR == 'Percona' ]]; then
     apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona-server-server-5.7 percona-toolkit
@@ -141,7 +142,7 @@ if [[ $DBFLAVOR == 'Percona' ]]; then
 elif [[ $DBFLAVOR == 'MariaDB' ]]; then
     apt-get install -yqq mariadb-server
     wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mariadb.cnf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/mysql//my.cnf
+    cat $USER_HOME/temp.conf >> /etc/mysql/mariadb.cnf
     rm $USER_HOME/temp.conf
 fi
 unset DEBIAN_FRONTEND
@@ -150,7 +151,9 @@ mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$DBPASS\"
 clear
 echo -e "${RED}Set the root password to the same as you set in the config.\n\n$CLEAR"
 mysql_secure_installation
-mysql -uroot "-e ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$ROOTPASSWORD';"
+if [[ $DBFLAVOR == 'Percona' ]]; then
+    mysql -uroot "-e ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$ROOTPASSWORD';"
+fi
 echo -e "${YELLOW}Creating .my.cnf$CLEAR"
 echo "[client]
 user=$USERNAME
@@ -163,10 +166,23 @@ password=$DBPASS
 chmod 600 $USER_HOME/.my.cnf
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.my.cnf
 
+echo -e "${YELLOW}Creating .mytop$CLEAR"
+echo "user=$USERNAME
+password=$DBPASS
+database=$DBNAME
+delay=1
+slow=10
+header=1
+color=1
+idle=1
+long=120" > $USER_HOME/.mytop
+chmod 600 $USER_HOME/.mytop
+chown $SUDO_USER:$SUDO_USER $USER_HOME/.mytop
+
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Nginx...\n\n$CLEAR"
 apt-get install -yqq nginx-extras
@@ -196,7 +212,7 @@ fi
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
@@ -233,7 +249,7 @@ fi
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
@@ -257,7 +273,7 @@ ln -sf $USER_HOME/.bashrc /root/
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
@@ -274,7 +290,7 @@ chown $SUDO_USER:$SUDO_USER $USER_HOME/bin
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
@@ -286,7 +302,7 @@ sudo apt-get -yqq install nodejs
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
@@ -309,7 +325,7 @@ chown -R www-data:www-data /var/www/$SITEHTTP
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
@@ -323,7 +339,7 @@ php bin/install.php install "$SITENAME" "$SITEHTTP" "$SITESSL" "$DBNAME" "$USERN
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
@@ -339,7 +355,7 @@ php bin/uglify.php
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
@@ -356,7 +372,7 @@ php bin/set_perms.php
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
-echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
+echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
