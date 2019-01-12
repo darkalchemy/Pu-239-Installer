@@ -14,6 +14,7 @@ SITEEMAIL=''        # email that will be used by your site to send emails
 ADMINUSERNAME=''    # your first users username
 ADMINPASS=''        # your first users password
 ADMINEMAIL=''       # your first users email
+PHPVER='7.2'        # can be 7.2 or 7.3
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
@@ -150,11 +151,13 @@ chmod 755 /var/log/nginx
 chown -R www-data:www-data /var/log/nginx
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tracker -O /etc/nginx/sites-available/tracker
 sed -i "s/root.*$/root \/var\/www\/$SITEHTTP\/public\/;/" /etc/nginx/sites-available/tracker
+sed -i "s/PHPVERSION/${PHPVER}/" /etc/nginx/sites-available/tracker
 rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
 sed -i "s/localhost/$SITEHTTP/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
+CORES = "$(($CORES * 2))"
 sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
 echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
 usermod -a -G www-data $SUDO_USER
@@ -173,8 +176,8 @@ echo -e "${GREEN}Installed Percona XtraDB Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
-apt-get -yqq install php7.2 php7.2-fpm php7.2-dev php7.2-curl php7.2-json php7.2-mysql php-imagick php7.2-bz2 php7.2-common php7.2-xml php7.2-gd php7.2-mbstring php7.2-zip
-sed -i 's/;listen =.*$/listen = \/run\/php\/php7.2-fpm.sock/' /etc/php/7.2/fpm/pool.d/www.conf
+apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip
+sed -i 's/;listen =.*$/listen = \/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -190,6 +193,7 @@ cat $USER_HOME/temp.conf >> /etc/mysql/percona-server.conf.d/mysqld.cnf
 rm $USER_HOME/temp.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tmux.conf -O $USER_HOME/.tmux.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/bashrc -O $USER_HOME/.bashrc
+sed -i -e "s/PHPVERSION/${PHPVER}/" $USER_HOME/.bashrc
 source $USER_HOME/.bashrc
 cp /etc/nanorc $USER_HOME/.nanorc
 sed -i -e 's/^# include/include/' $USER_HOME/.nanorc
@@ -246,7 +250,7 @@ cd /var/www/
 rm -fr /var/www/$SITEHTTP
 git clone https://github.com/darkalchemy/Pu-239.git $SITEHTTP
 service mysql restart
-service php7.2-fpm restart
+service php${PHPVER}-fpm restart
 service nginx restart
 cd /var/www/$SITEHTTP
 chown -R $SUDO_USER:www-data /var/www/$SITEHTTP
