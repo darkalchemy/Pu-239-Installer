@@ -149,7 +149,7 @@ elif [[ $DBFLAVOR == 'MariaDB' ]]; then
     rm $USER_HOME/temp.conf
 fi
 unset DEBIAN_FRONTEND
-mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
+mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED WITH mysql_native_password BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
 
 clear
 echo -e "${RED}Set the root password to the same as you set in the config.\n\n$CLEAR"
