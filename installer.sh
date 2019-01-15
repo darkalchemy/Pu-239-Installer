@@ -2,24 +2,25 @@
 
 set -e
 #CONFIG - these must be set
-SITENAME=''         # the name that will be displayed throughout your site as the site name
-SITEHTTP=''         # fully qualified domain name, do not include http://
-SITESSL=''          # fully qualified domain name, do not include https://
-USERNAME=''         # username for mysql
-DBPASS=''             # password for mysql user
-DBNAME=''           # database name
-ROOTPASSWORD=''     # mysql root user password, this is needed to fix login by root user
-BOTNAME=''          # username for your site bot
-SITEEMAIL=''        # email that will be used by your site to send emails
-ADMINUSERNAME=''    # your first users username
-ADMINPASS=''        # your first users password
-ADMINEMAIL=''       # your first users email
-PHPVER='7.2'        # can be 7.2 or 7.3
-MEMCACHED=false     # install memcached true/false
-REDIS=false         # install redis-server true/false
-APCU=false          # install APCu true/false
-DBFLAVOR='Percona'  # install either Percona or MariaDB
-GOACCESS=false      # install goaccess access log analyzer
+SITENAME=''                      # the name that will be displayed throughout your site as the site name
+SITEHTTP=''                      # fully qualified domain name, do not include http://
+SITESSL=''                       # fully qualified domain name, do not include https://
+USERNAME=''                      # username for mysql
+DBPASS=''                        # password for mysql user
+DBNAME=''                        # database name
+ROOTPASSWORD=''                  # mysql root user password, this is needed to fix login by root user
+BOTNAME=''                       # username for your site bot
+SITEEMAIL=''                     # email that will be used by your site to send emails
+ADMINUSERNAME=''                 # your first users username
+ADMINPASS=''                     # your first users password
+ADMINEMAIL=''                    # your first users email
+PATHTOINSTALL= '/var/www/pu239'  # the path to install Pu-239 into, this path with be removed, if it already exists
+PHPVER='7.2'                     # can be 7.2 or 7.3
+MEMCACHED=false                  # install memcached true/false
+REDIS=false                      # install redis-server true/false
+APCU=false                       # install APCu true/false
+DBFLAVOR='Percona'               # install either Percona or MariaDB
+GOACCESS=false                   # install goaccess access log analyzer
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
@@ -27,12 +28,12 @@ GREEN="\033[1;32m"
 CLEAR="\033[00m"
 
 if [[ $EUID -ne 0 && whoami != $SUDO_USER && whoami != 'root' ]]; then
-	export script=`basename $0`
-	echo
-	echo -e "${RED}You must run this script as a non-privileged user with sudo like:
-	sudo ./${script}\033[0m" 1>&2
-	echo
-	exit
+    export script=`basename $0`
+    echo
+    echo -e "${RED}You must run this script as a non-privileged user with sudo like:
+    sudo ./${script}\033[0m" 1>&2
+    echo
+    exit
 fi
 
 export USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
@@ -101,15 +102,17 @@ fi
 
 clear
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
-apt-get install -yqq software-properties-common git curl net-tools
+apt-get install -yqq software-properties-common
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
+add-apt-repository -y ppa:git-core/ppa
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 if [[ $DBFLAVOR == 'Percona' ]]; then
-    wget -q https://repo.percona.com/apt/percona-release_0.1-6.$(lsb_release -sc)_all.deb
-    dpkg -i percona-release_0.1-6.$(lsb_release -sc)_all.deb
-    rm -f percona-release_0.1-6.$(lsb_release -sc)_all.deb
-    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    wget -q https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb
+    dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb
+    rm -f percona-release_latest.$(lsb_release -sc)_all.deb
+    percona-release setup ps80
 elif [[ $DBFLAVOR == 'MariaDB' ]]; then
     apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
     add-apt-repository -y 'deb [arch=amd64,arm64,ppc64el] http://ftp.osuosl.org/pub/mariadb/repo/10.3/ubuntu bionic main'
@@ -118,13 +121,13 @@ else
     exit
 fi
 
-
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Updating your system before we begin...\n\n$CLEAR"
 apt-get -yqq update
 apt-get -yqq upgrade
+apt-get install git curl net-tools
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -135,9 +138,9 @@ rm -f $USER_HOME/.my.cnf
 rm -f $USER_HOME/.mytop
 export DEBIAN_FRONTEND=noninteractive
 if [[ $DBFLAVOR == 'Percona' ]]; then
-    apt-get install -yqq percona-server-common-5.7 percona-server-client-5.7 percona-server-server-5.7 percona-toolkit
+    apt-get install -yqq percona-server-server percona-toolkit
     wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/percona.cnf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/mysql/percona-server.conf.d/mysqld.cnf
+    cat $USER_HOME/temp.conf >> /etc/mysql/mysql.conf.d/mysqld.cnf
     rm $USER_HOME/temp.conf
 elif [[ $DBFLAVOR == 'MariaDB' ]]; then
     apt-get install -yqq mariadb-server
@@ -309,18 +312,17 @@ echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Now we download the Pu-239 Source Code into /var/www/$SITEHTTP...\n\n$CLEAR"
-cd /var/www/
-rm -fr /var/www/$SITEHTTP
-git clone https://github.com/darkalchemy/Pu-239.git $SITEHTTP
+echo -e "${YELLOW}Now we download the Pu-239 Source Code into $PATHTOINSTALL...\n\n$CLEAR"
+rm -fr $PATHTOINSTALL
+git clone https://github.com/darkalchemy/Pu-239.git $PATHTOINSTALL
 service mysql restart
 service php${PHPVER}-fpm restart
 service nginx restart
-cd /var/www/$SITEHTTP
-chown -R $SUDO_USER:www-data /var/www/$SITEHTTP
+cd $PATHTOINSTALL
+chown -R $SUDO_USER:www-data $PATHTOINSTALL
 $USER_HOME/bin/composer install
 sudo -u $SUDO_USER npm install
-chown -R www-data:www-data /var/www/$SITEHTTP
+chown -R www-data:www-data $PATHTOINSTALL
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -331,7 +333,7 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
-echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$SITEHTTP.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing your site.$CLEAR"
 php bin/install.php install "$SITENAME" "$SITEHTTP" "$SITESSL" "$DBNAME" "$USERNAME" "$DBPASS" "$BOTNAME" "$SITEEMAIL" "$ADMINUSERNAME" "$ADMINPASS" "$ADMINEMAIL"
@@ -345,11 +347,11 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
-echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$SITEHTTP.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Creating, merging, minifying and gzipping css and js files.$CLEAR"
-cd /var/www/$SITEHTTP
+cd $PATHTOINSTALL
 php bin/uglify.php
 
 clear
@@ -361,12 +363,12 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
-echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$SITEHTTP.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Setting correct permissions and ownership.$CLEAR"
-chown -R $SUDO_USER:www-data /var/www/$SITEHTTP
+chown -R $SUDO_USER:www-data $PATHTOINSTALL
 php bin/set_perms.php
 
 clear
@@ -378,7 +380,7 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
-echo -e "${GREEN}Downloaded the Pu-239 Source Code into /var/www/$SITEHTTP.$CLEAR"
+echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
 echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
@@ -397,18 +399,18 @@ ${GREEN}sudo crontab -e
 
 ${RED}### Use this if you DO NOT need any logging for these scripts
 ${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
-* * * * * su www-data -s /bin/bash -c \"/usr/bin/php /var/www/${SITEHTTP}/include/cron_controller.php\" >/dev/null 2>&1
+* * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >/dev/null 2>&1
 
 # this can take several minutes to run, especially the first time, so we run it separate
 # runs images_update.php every 30 minutes, if not already running, as user www-data
-*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php /var/www/${SITEHTTP}/include/images_update.php\" >/dev/null 2>&1
+*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >/dev/null 2>&1
 
 ${RED}### Use this if you DO need any logging for these scripts
 ${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
-* * * * * su www-data -s /bin/bash -c \"/usr/bin/php /var/www/${SITEHTTP}/include/cron_controller.php\" >> /var/log/nginx/cron_`date +\%Y\%m\%d`.log 2>&1
+* * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >> /var/log/nginx/cron_`date +\%Y\%m\%d`.log 2>&1
 
 # this can take several minutes to run, especially the first time, so we run it separate
 # runs images_update.php every 30 minutes, if not already running, as user www-data
-*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php /var/www/${SITEHTTP}/include/images_update.php\" >> /var/log/nginx/images_`date +\%Y\%m\%d`.log 2>&1
+*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >> /var/log/nginx/images_`date +\%Y\%m\%d`.log 2>&1
 $CLEAR"
 
