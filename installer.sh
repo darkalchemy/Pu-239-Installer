@@ -398,19 +398,19 @@ echo -e "${RED}# add cron job to root cron for running cleanup
 ${GREEN}sudo crontab -e
 
 ${RED}### Use this if you DO NOT need any logging for these scripts
-${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
+${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data.$CLEAR
 * * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >/dev/null 2>&1
 
-# this can take several minutes to run, especially the first time, so we run it separate
-# runs images_update.php every 30 minutes, if not already running, as user www-data
+${GREEN}# this can take several minutes to run, especially the first time, so we run it separate
+${GREEN}# runs images_update.php every 30 minutes, if not already running, as user www-data.$CLEAR
 */30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >/dev/null 2>&1
 
 ${RED}### Use this if you DO need any logging for these scripts
-${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data
-* * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >> /var/log/nginx/cron_`date +\%Y\%m\%d`.log 2>&1
+${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data.$CLEAR
+* * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >> /var/log/nginx/cron_\`date +\%Y\%m\%d\`.log 2>&1
 
-# this can take several minutes to run, especially the first time, so we run it separate
-# runs images_update.php every 30 minutes, if not already running, as user www-data
-*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >> /var/log/nginx/images_`date +\%Y\%m\%d`.log 2>&1
+${GREEN}# this can take several minutes to run, especially the first time, so we run it separate
+${GREEN}# runs images_update.php every 30 minutes, if not already running, as user www-data.$CLEAR
+*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >> /var/log/nginx/images_\`date +\%Y\%m\%d\`.log 2>&1
 $CLEAR"
 
