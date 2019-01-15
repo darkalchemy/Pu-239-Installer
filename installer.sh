@@ -127,7 +127,7 @@ echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Updating your system before we begin...\n\n$CLEAR"
 apt-get -yqq update
 apt-get -yqq upgrade
-apt-get install git curl net-tools
+apt-get install -yqq git curl net-tools
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -193,7 +193,10 @@ mkdir -p /var/log/nginx
 chmod 755 /var/log/nginx
 chown -R www-data:www-data /var/log/nginx
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tracker -O /etc/nginx/sites-available/tracker
-sed -i "s/root.*$/root \/var\/www\/$PATHTOINSTALL\/public\/;/" /etc/nginx/sites-available/tracker
+REPLACE="\/"
+TOREPLACE="/"
+PINSTALL="${PATHTOINSTALL//$TOREPLACE/$REPLACE}"
+sed -i "s/root.*$/root \/var\/www\/${PINSTALL}\/public\/;/" /etc/nginx/sites-available/tracker
 sed -i "s/PHPVERSION/${PHPVER}/" /etc/nginx/sites-available/tracker
 rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
