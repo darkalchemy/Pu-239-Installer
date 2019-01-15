@@ -14,7 +14,7 @@ SITEEMAIL=''                     # email that will be used by your site to send 
 ADMINUSERNAME=''                 # your first users username
 ADMINPASS=''                     # your first users password
 ADMINEMAIL=''                    # your first users email
-PATHTOINSTALL= '/var/www/pu239'  # the path to install Pu-239 into, this path with be removed, if it already exists
+PATHTOINSTALL='/var/www/pu239'  # the path to install Pu-239 into, this path with be removed, if it already exists
 PHPVER='7.2'                     # can be 7.2 or 7.3
 MEMCACHED=false                  # install memcached true/false
 REDIS=false                      # install redis-server true/false
@@ -193,7 +193,7 @@ mkdir -p /var/log/nginx
 chmod 755 /var/log/nginx
 chown -R www-data:www-data /var/log/nginx
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tracker -O /etc/nginx/sites-available/tracker
-sed -i "s/root.*$/root \/var\/www\/$SITEHTTP\/public\/;/" /etc/nginx/sites-available/tracker
+sed -i "s/root.*$/root \/var\/www\/$PATHTOINSTALL\/public\/;/" /etc/nginx/sites-available/tracker
 sed -i "s/PHPVERSION/${PHPVER}/" /etc/nginx/sites-available/tracker
 rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
