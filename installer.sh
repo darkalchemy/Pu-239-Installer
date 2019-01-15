@@ -196,7 +196,7 @@ wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239
 REPLACE="\/"
 TOREPLACE="/"
 PINSTALL="${PATHTOINSTALL//$TOREPLACE/$REPLACE}"
-sed -i "s/root.*$/root \/var\/www\/${PINSTALL}\/public\/;/" /etc/nginx/sites-available/tracker
+sed -i "s/root.*$/root ${PINSTALL}\/public\/;/" /etc/nginx/sites-available/tracker
 sed -i "s/PHPVERSION/${PHPVER}/" /etc/nginx/sites-available/tracker
 rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
