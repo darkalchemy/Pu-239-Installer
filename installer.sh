@@ -109,9 +109,9 @@ add-apt-repository -y ppa:pi-rho/dev
 add-apt-repository -y ppa:git-core/ppa
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 if [[ $DBFLAVOR == 'Percona' ]]; then
-    wget -q https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb
-    dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb
-    rm -f percona-release_latest.$(lsb_release -sc)_all.deb
+    wget -q https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb -O percona-release_latest.deb
+    dpkg -i percona-release_latest.deb
+    rm -f percona-release_latest.deb
     percona-release setup ps80
 elif [[ $DBFLAVOR == 'MariaDB' ]]; then
     apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
