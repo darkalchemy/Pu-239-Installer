@@ -14,7 +14,7 @@ SITEEMAIL=''                     # email that will be used by your site to send 
 ADMINUSERNAME=''                 # your first users username
 ADMINPASS=''                     # your first users password
 ADMINEMAIL=''                    # your first users email
-PATHTOINSTALL='/var/www/pu239'  # the path to install Pu-239 into, this path with be removed, if it already exists
+PATHTOINSTALL='/var/www/pu239'   # the path to install Pu-239 into, this path with be removed, if it already exists
 PHPVER='7.2'                     # can be 7.2 or 7.3
 MEMCACHED=false                  # install memcached true/false
 REDIS=false                      # install redis-server true/false
@@ -224,6 +224,9 @@ echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
 apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip
 sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
+sed -i 's/;listen.backlog =.*$/listen.backlog = 65535/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
+sed -i 's/pm = dynamic/pm = static/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
+sed -i 's/pm.max_children = 5/pm.max_children = 50/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 
 if [[ "$MEMCACHED" = true ]]; then
     apt-get -yqq install php-memcached memcached
@@ -394,7 +397,37 @@ echo -e "${GREEN}Done.$CLEAR"
 rm -r /dev/shm/$DBNAME
 
 clear
+echo -e "${RED}In the next screen, please copy and paste this into the editor, then save and close it:$CLEAR"
+echo -e "${GREEN}[Service]
+  LimitNOFILE = 200000 $CLEAR"
+read -p "press enter to continue"
+systemctl edit mysql
+if grep -q 'Maximum Socket Receive Buffer' /etc/sysctl.conf; then
+    echo -e "${GREEN}/etc/sysctl.conf does not need editing.$CLEAR"
+else
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/sysctl.conf -O $USER_HOME/temp.conf
+    cat $USER_HOME/temp.conf >> /etc/sysctl.conf
+    rm $USER_HOME/temp.conf
+fi
+if grep -q 'root soft     nproc          200000' /etc/security/limits.conf; then
+    echo -e "${GREEN}/etc/security/limits.conf does not need editing.$CLEAR"
+else
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/limits.conf -O $USER_HOME/temp.conf
+    cat $USER_HOME/temp.conf >> /etc/security/limits.conf
+    rm $USER_HOME/temp.conf
+fi
+
+if grep -q 'session required pam_limits.so' /etc/pam.d/common-session; then
+    echo -e "${GREEN}/etc/security/limits.conf does not need editing.$CLEAR"
+else
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/session.conf -O $USER_HOME/temp.conf
+    cat $USER_HOME/temp.conf >> /etc/pam.d/common-session
+    rm $USER_HOME/temp.conf
+fi
+
+clear
 echo -e "${GREEN}The installation of Pu-239 completed successfully.$CLEAR"
+echo -e "${GREEN}You should reboot this server to enable the system settings that have been changed.$CLEAR"
 echo -e "${GREEN}The cleanup scripts require an addition to crontab as listed below:$CLEAR"
 
 echo -e "${RED}# add cron job to root cron for running cleanup
