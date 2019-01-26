@@ -28,7 +28,7 @@ RED="\033[1;31m"
 GREEN="\033[1;32m"
 CLEAR="\033[00m"
 
-if [[ $EUID -ne 0 && `whoami` != $SUDO_USER && `whoami` != 'root' ]]; then
+if [[ $EUID -ne 0 ]]; then
     export script=`basename $0`
     echo
     echo -e "${RED}You must run this script as a non-privileged user with sudo like:
