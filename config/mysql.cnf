@@ -27,3 +27,6 @@ log_queries_not_using_indexes = 0
 # Recommended in standard MySQL setup
 sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES,ONLY_FULL_GROUP_BY,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO
 explicit_defaults_for_timestamp
+
+# caching_sha2_password is not yet available in pdo/mysqli
+default_authentication_plugin=mysql_native_password

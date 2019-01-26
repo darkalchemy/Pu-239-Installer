@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+VERSION=.1
 set -e
 #CONFIG - these must be set
 SITENAME=''                      # the name that will be displayed throughout your site as the site name
@@ -15,7 +16,7 @@ ADMINUSERNAME=''                 # your first users username
 ADMINPASS=''                     # your first users password
 ADMINEMAIL=''                    # your first users email
 PATHTOINSTALL='/var/www/pu239'   # the path to install Pu-239 into, this path with be removed, if it already exists
-PHPVER='7.2'                     # can be 7.2 or 7.3
+PHPVER='7.3'                     # can be 7.2 or 7.3
 MEMCACHED=false                  # install memcached true/false
 REDIS=false                      # install redis-server true/false
 APCU=false                       # install APCu true/false
@@ -27,9 +28,19 @@ RED="\033[1;31m"
 GREEN="\033[1;32m"
 CLEAR="\033[00m"
 
-if [[ $EUID -ne 0 && whoami != $SUDO_USER && whoami != 'root' ]]; then
+if [[ $EUID -ne 0 && `whoami` != $SUDO_USER && `whoami` != 'root' ]]; then
     export script=`basename $0`
     echo
+    echo -e "${RED}You must run this script as a non-privileged user with sudo like:
+    sudo ./${script}\033[0m" 1>&2
+    echo
+    exit
+fi
+
+if [[ `logname` == 'root' ]]; then
+    export script=`basename $0`
+    echo
+    echo -e "${RED}This script does not allow you to be logged in as the root user."
     echo -e "${RED}You must run this script as a non-privileged user with sudo like:
     sudo ./${script}\033[0m" 1>&2
     echo
@@ -102,7 +113,7 @@ fi
 
 clear
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
-apt-get install -yqq software-properties-common
+apt-get install -yqq software-properties-common curl
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
@@ -127,7 +138,7 @@ echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Updating your system before we begin...\n\n$CLEAR"
 apt-get -yqq update
 apt-get -yqq upgrade
-apt-get install -yqq git curl net-tools
+apt-get install -yqq git net-tools
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -139,12 +150,12 @@ rm -f $USER_HOME/.mytop
 export DEBIAN_FRONTEND=noninteractive
 if [[ $DBFLAVOR == 'Percona' ]]; then
     apt-get install -yqq percona-server-server percona-toolkit
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/percona.cnf -O $USER_HOME/temp.conf
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O $USER_HOME/temp.conf
     cat $USER_HOME/temp.conf >> /etc/mysql/mysql.conf.d/mysqld.cnf
     rm $USER_HOME/temp.conf
 elif [[ $DBFLAVOR == 'MariaDB' ]]; then
     apt-get install -yqq mariadb-server
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mariadb.cnf -O $USER_HOME/temp.conf
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O $USER_HOME/temp.conf
     cat $USER_HOME/temp.conf >> /etc/mysql/mariadb.cnf
     rm $USER_HOME/temp.conf
 fi
@@ -249,8 +260,8 @@ if [[ "$APCU" = true ]]; then
 fi
 
 if [[ "$GOACCESS" = true ]]; then
-    echo "deb http://deb.goaccess.io/ $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list.d/goaccess.list
-    wget -O - https://deb.goaccess.io/gnugpg.key | sudo apt-key add -
+    echo "deb http://deb.goaccess.io/ $(lsb_release -cs) main" | tee -a /etc/apt/sources.list.d/goaccess.list
+    wget -O - https://deb.goaccess.io/gnugpg.key | apt-key add -
     apt-get -yqq update
     apt-get -yqq install goaccess
 fi
@@ -306,7 +317,7 @@ echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing Node.js...\n\n$CLEAR"
-sudo apt-get -yqq install nodejs
+apt-get -yqq install nodejs
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -326,7 +337,7 @@ service php${PHPVER}-fpm restart
 service nginx restart
 cd $PATHTOINSTALL
 chown -R $SUDO_USER:www-data $PATHTOINSTALL
-$USER_HOME/bin/composer install
+sudo -u $SUDO_USER $USER_HOME/bin/composer install
 sudo -u $SUDO_USER npm install
 chown -R www-data:www-data $PATHTOINSTALL
 
