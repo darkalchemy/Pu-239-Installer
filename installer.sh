@@ -306,7 +306,6 @@ apt-get -yqq install unzip htop tmux rar unrar jpegoptim optipng pngquant gifsic
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tmux.conf -O $USER_HOME/.tmux.conf
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/bashrc -O $USER_HOME/.bashrc
 sed -i -e "s/PHPVERSION/${PHPVER}/" $USER_HOME/.bashrc
-source $USER_HOME/.bashrc
 cp /etc/nanorc $USER_HOME/.nanorc
 sed -i -e 's/^# include/include/' $USER_HOME/.nanorc
 sed -i -e 's/^# set tabsize 8/set tabsize 4/' $USER_HOME/.nanorc
@@ -335,6 +334,7 @@ mkdir -p $USER_HOME/bin/
 mv $USER_HOME/composer.phar $USER_HOME/bin/composer
 chown $SUDO_USER:$SUDO_USER $USER_HOME/.composer
 chown $SUDO_USER:$SUDO_USER $USER_HOME/bin
+source $USER_HOME/.bashrc
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
@@ -365,7 +365,7 @@ service php${PHPVER}-fpm restart
 service nginx restart
 cd $PATHTOINSTALL
 chown -R $SUDO_USER:www-data $PATHTOINSTALL
-sudo -u $SUDO_USER $USER_HOME/bin/composer install
+sudo -u $SUDO_USER composer install --no-scripts --no-progress --no-suggest --optimize-autoloader
 sudo -u $SUDO_USER npm install
 chown -R www-data:www-data $PATHTOINSTALL
 
