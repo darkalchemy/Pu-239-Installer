@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=1.0
+VERSION=1.1
 set -e
 #CONFIG - these must be set
 SITENAME=''                      # the name that will be displayed throughout your site as the site name
