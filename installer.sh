@@ -111,6 +111,34 @@ if [[ $ADMINEMAIL == "" ]]; then
     exit
 fi
 
+if [[ $PATHTOINSTALL == "" ]]; then
+    PATHTOINSTALL='/var/www/master';
+fi
+
+if [[ $PHPVER == "" ]]; then
+    PHPVER='7.3';
+fi
+
+if [[ $MEMCACHED == "" ]]; then
+    MEMCACHED=false
+fi
+
+if [[ $REDIS == "" ]]; then
+    REDIS=false;
+fi;
+
+if [[ $APCU == "" ]]; then
+    APCU=false;
+fi
+
+if [[ $DBFLAVOR == "" ]]; then
+    DBFLAVOR='Percona';
+fi
+
+if [[ $GOACCESS == "" ]]; then
+    GOACCESS=false;
+fi
+
 clear
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
 apt-get install -yqq software-properties-common curl
@@ -300,7 +328,7 @@ echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing composer...\n\n$CLEAR"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
 mkdir -p $USER_HOME/bin/

@@ -162,5 +162,10 @@ echo -e "${cyan}"; cal -3; echo ""
 
 # add ~/bin to path
 if [ -d "$HOME/bin" ] ; then
-  PATH="$HOME/bin:$PATH"
+    [[ ":$PATH:" != *":$HOME/bin:"* ]] && PATH="$HOME/bin:${PATH}"
+fi
+
+# add ~/.composer/vendor/bin to path
+if [ -d "$HOME/.composer/vendor/bin" ] ; then
+    [[ ":$PATH:" != *":$HOME/.composer/vendor/bin:"* ]] && PATH="$HOME/.composer/vendor/bin:${PATH}"
 fi
