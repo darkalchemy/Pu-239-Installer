@@ -365,7 +365,7 @@ service php${PHPVER}-fpm restart
 service nginx restart
 cd $PATHTOINSTALL
 chown -R $SUDO_USER:www-data $PATHTOINSTALL
-sudo -u $SUDO_USER composer install --no-scripts --no-progress --no-suggest --optimize-autoloader
+sudo -u $SUDO_USER $USER_HOME/bin/composer install --no-scripts --no-progress --no-suggest --optimize-autoloader
 sudo -u $SUDO_USER npm install
 chown -R www-data:www-data $PATHTOINSTALL
 
