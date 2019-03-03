@@ -6,7 +6,7 @@ set -e
 SITENAME=''                      # the name that will be displayed throughout your site as the site name
 SITEHTTP=''                      # fully qualified domain name, do not include http://
 SITESSL=''                       # fully qualified domain name, do not include https://
-USERNAME=''                      # username for mysql
+USERNAME=''                      # username for mysql, not root
 DBPASS=''                        # password for mysql user
 DBNAME=''                        # database name
 ROOTPASSWORD=''                  # mysql root user password, this is needed to fix login by root user
