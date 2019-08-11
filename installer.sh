@@ -153,7 +153,7 @@ if [[ ${DBFLAVOR} == 'Percona' ]]; then
     percona-release setup ps80
 elif [[ ${DBFLAVOR} == 'MariaDB' ]]; then
     apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-    add-apt-repository -y 'deb [arch=amd64,arm64,ppc64el] http://ftp.osuosl.org/pub/mariadb/repo/10.4/ubuntu bionic main'
+    add-apt-repository -y "deb [arch=amd64,arm64,ppc64el] http://ftp.osuosl.org/pub/mariadb/repo/10.4/ubuntu $(lsb_release -sc) main"
 else
     echo -e "${RED}You must set the DB Flavor to either Percona or MariaDB"
     exit
