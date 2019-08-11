@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 
-VERSION=1.1
+VERSION=1.2
 set -e
 #CONFIG - these must be set
-SITENAME=''                      # the name that will be displayed throughout your site as the site name
-SITEHTTP=''                      # fully qualified domain name, do not include http://
-SITESSL=''                       # fully qualified domain name, do not include https://
-USERNAME=''                      # username for mysql, not root
-DBPASS=''                        # password for mysql user
-DBNAME=''                        # database name
-ROOTPASSWORD=''                  # mysql root user password, this is needed to fix login by root user
-BOTNAME=''                       # username for your site bot
-SITEEMAIL=''                     # email that will be used by your site to send emails
-ADMINUSERNAME=''                 # your first users username
-ADMINPASS=''                     # your first users password
-ADMINEMAIL=''                    # your first users email
-PATHTOINSTALL='/var/www/pu239'   # the path to install Pu-239 into, this path with be removed, if it already exists
-PHPVER='7.3'                     # can be 7.2 or 7.3
-MEMCACHED=false                  # install memcached true/false
-REDIS=false                      # install redis-server true/false
-APCU=false                       # install APCu true/false
-DBFLAVOR='Percona'               # install either Percona or MariaDB
-GOACCESS=false                   # install goaccess access log analyzer
+SITENAME=''         # the name that will be displayed throughout your site as the site name
+SITEHTTP=''         # fully qualified domain name, do not include http://
+SITESSL=''          # fully qualified domain name, do not include https://
+USERNAME=''         # username for mysql
+DBPASS=''           # password for mysql user
+DBNAME=''           # database name
+ROOTPASSWORD=''     # mysql root user password, this is needed to fix login by root user
+BOTNAME=''          # username for your site bot
+SITEEMAIL=''        # email that will be used by your site to send emails
+ADMINUSERNAME=''    # your first users username
+ADMINPASS=''        # your first users password
+ADMINEMAIL=''       # your first users email
+PATHTOINSTALL='/var/www/master'  # the path to install Pu-239 into, this path with be removed, if it already exists
+PHPVER='7.3'        # only 7.3
+MEMCACHED=false     # install memcached true/false
+REDIS=false         # install redis-server true/false
+APCU=false          # install APCu true/false
+DBFLAVOR='Percona'  # install either Percona or MariaDB
+GOACCESS=false      # install goaccess access log analyzer
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
@@ -47,95 +47,94 @@ if [[ `logname` == 'root' ]]; then
     exit
 fi
 
-export USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
-usermod -a -G www-data $SUDO_USER
-usermod -a -G $SUDO_USER www-data
+[[ ${SUDO_USER} ]] && user=${SUDO_USER} || user=`whoami`
+export USER_HOME=$(getent passwd ${user} | cut -d: -f6)
 
-if [[ $SITENAME == "" ]]; then
+if [[ ${SITENAME} == "" ]]; then
     echo -e "${RED}You must fill in the site name"
     exit
 fi
 
-if [[ $SITEHTTP == "" ]]; then
+if [[ ${SITEHTTP} == "" ]]; then
     echo -e "${RED}You must fill in the FQDN non ssl"
     exit
 fi
 
-if [[ $SITESSL == "" ]]; then
+if [[ ${SITESSL} == "" ]]; then
     echo -e "${RED}You must fill in the FQDN ssl"
     exit
 fi
 
-if [[ $USERNAME == "" ]]; then
+if [[ ${USERNAME} == "" ]]; then
     echo -e "${RED}You must fill in the username"
     exit
 fi
 
-if [[ $DBPASS == "" ]]; then
+if [[ ${DBPASS} == "" ]]; then
     echo -e "${RED}You must fill in the password"
     exit
 fi
 
-if [[ $DBNAME == "" ]]; then
+if [[ ${DBNAME} == "" ]]; then
     echo -e "${RED}You must fill in the database name"
     exit
 fi
 
-if [[ $ROOTPASSWORD == "" ]]; then
+if [[ ${ROOTPASSWORD} == "" ]]; then
     echo -e "${RED}You must fill in the root users mysql password"
     exit
 fi
 
-if [[ $BOTNAME == "" ]]; then
+if [[ ${BOTNAME} == "" ]]; then
     echo -e "${RED}You must fill in the sites bot username"
     exit
 fi
 
-if [[ $SITEEMAIL == "" ]]; then
+if [[ ${SITEEMAIL} == "" ]]; then
     echo -e "${RED}You must fill in the sites email"
     exit
 fi
 
-if [[ $ADMINUSERNAME == "" ]]; then
+if [[ ${ADMINUSERNAME} == "" ]]; then
     echo -e "${RED}You must fill in the admins username"
     exit
 fi
 
-if [[ $ADMINPASS == "" ]]; then
+if [[ ${ADMINPASS} == "" ]]; then
     echo -e "${RED}You must fill in the admins password"
     exit
 fi
 
-if [[ $ADMINEMAIL == "" ]]; then
+if [[ ${ADMINEMAIL} == "" ]]; then
     echo -e "${RED}You must fill in the admins email"
     exit
 fi
 
-if [[ $PATHTOINSTALL == "" ]]; then
+if [[ ${PATHTOINSTALL} == "" ]]; then
     PATHTOINSTALL='/var/www/master';
 fi
 
-if [[ $PHPVER == "" ]]; then
+#if [[ ${PHPVER} == "" ]]; then
     PHPVER='7.3';
-fi
+#fi
 
-if [[ $MEMCACHED == "" ]]; then
+if [[ ${MEMCACHED} == "" ]]; then
     MEMCACHED=false
 fi
 
-if [[ $REDIS == "" ]]; then
+if [[ ${REDIS} == "" ]]; then
     REDIS=false;
 fi;
 
-if [[ $APCU == "" ]]; then
+if [[ ${APCU} == "" ]]; then
     APCU=false;
 fi
 
-if [[ $DBFLAVOR == "" ]]; then
+if [[ ${DBFLAVOR} == "" ]]; then
     DBFLAVOR='Percona';
 fi
 
-if [[ $GOACCESS == "" ]]; then
+if [[ ${GOACCESS} == "" ]]; then
     GOACCESS=false;
 fi
 
@@ -147,14 +146,14 @@ add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
 add-apt-repository -y ppa:git-core/ppa
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-if [[ $DBFLAVOR == 'Percona' ]]; then
+if [[ ${DBFLAVOR} == 'Percona' ]]; then
     wget -q https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb -O percona-release_latest.deb
     dpkg -i percona-release_latest.deb
     rm -f percona-release_latest.deb
     percona-release setup ps80
-elif [[ $DBFLAVOR == 'MariaDB' ]]; then
+elif [[ ${DBFLAVOR} == 'MariaDB' ]]; then
     apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-    add-apt-repository -y 'deb [arch=amd64,arm64,ppc64el] http://ftp.osuosl.org/pub/mariadb/repo/10.3/ubuntu bionic main'
+    add-apt-repository -y 'deb [arch=amd64,arm64,ppc64el] http://ftp.osuosl.org/pub/mariadb/repo/10.4/ubuntu bionic main'
 else
     echo -e "${RED}You must set the DB Flavor to either Percona or MariaDB"
     exit
@@ -173,53 +172,52 @@ echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing ${DBFLAVOR} Server...\n\n$CLEAR"
-rm -f $USER_HOME/.my.cnf
-rm -f $USER_HOME/.mytop
+rm -f ${USER_HOME}/.my.cnf
+rm -f ${USER_HOME}/.mytop
 export DEBIAN_FRONTEND=noninteractive
-if [[ $DBFLAVOR == 'Percona' ]]; then
+if [[ ${DBFLAVOR} == 'Percona' ]]; then
     apt-get install -yqq percona-server-server percona-toolkit
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/mysql/mysql.conf.d/mysqld.cnf
-    rm $USER_HOME/temp.conf
-elif [[ $DBFLAVOR == 'MariaDB' ]]; then
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O ${USER_HOME}/temp.conf
+    cat ${USER_HOME}/temp.conf >> /etc/mysql/mysql.conf.d/mysqld.cnf
+    rm ${USER_HOME}/temp.conf
+    clear
+    unset DEBIAN_FRONTEND
+    sudo mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED WITH mysql_native_password BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO \"$USERNAME\"@localhost;FLUSH PRIVILEGES;"
+    mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$ROOTPASSWORD';"
+elif [[ ${DBFLAVOR} == 'MariaDB' ]]; then
     apt-get install -yqq mariadb-server
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/mysql/mariadb.cnf
-    rm $USER_HOME/temp.conf
-fi
-unset DEBIAN_FRONTEND
-mysql -uroot -e "CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED WITH mysql_native_password BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO $USERNAME@localhost;FLUSH PRIVILEGES;"
-
-clear
-echo -e "${RED}Set the root password to the same as you set in the config.\n\n$CLEAR"
-mysql_secure_installation
-if [[ $DBFLAVOR == 'Percona' ]]; then
-    mysql -uroot "-e ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$ROOTPASSWORD';"
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O ${USER_HOME}/temp.conf
+    cat ${USER_HOME}/temp.conf >> /etc/mysql/mariadb.cnf
+    rm ${USER_HOME}/temp.conf
+    unset DEBIAN_FRONTEND
+    clear
+    sudo mysql -e "SET old_passwords=0; ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOTPASSWORD';"
+    sudo mysql -uroot -p"$ROOTPASSWORD" -e "SET old_passwords=0; CREATE USER \"$USERNAME\"@'localhost' IDENTIFIED BY \"$DBPASS\";CREATE DATABASE $DBNAME;GRANT ALL PRIVILEGES ON $DBNAME . * TO \"$USERNAME\"@localhost;FLUSH PRIVILEGES;"
 fi
 echo -e "${YELLOW}Creating .my.cnf$CLEAR"
 echo "[client]
-user=$USERNAME
-password=$DBPASS
+user=${USERNAME}
+password=${DBPASS}
 
 [mysql]
-user=$USERNAME
-password=$DBPASS
-" > $USER_HOME/.my.cnf
-chmod 600 $USER_HOME/.my.cnf
-chown $SUDO_USER:$SUDO_USER $USER_HOME/.my.cnf
+user=${USERNAME}
+password=${DBPASS}
+" > ${USER_HOME}/.my.cnf
+chmod 600 ${USER_HOME}/.my.cnf
+chown ${user}:${user} ${USER_HOME}/.my.cnf
 
 echo -e "${YELLOW}Creating .mytop$CLEAR"
-echo "user=$USERNAME
-password=$DBPASS
-database=$DBNAME
+echo "user=${USERNAME}
+password=${DBPASS}
+database=${DBNAME}
 delay=1
 slow=10
 header=1
 color=1
 idle=1
-long=120" > $USER_HOME/.mytop
-chmod 600 $USER_HOME/.mytop
-chown $SUDO_USER:$SUDO_USER $USER_HOME/.mytop
+long=120" > ${USER_HOME}/.mytop
+chmod 600 ${USER_HOME}/.mytop
+chown ${user}:${user} ${USER_HOME}/.mytop
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -239,16 +237,16 @@ sed -i "s/root.*$/root ${PINSTALL}\/public\/;/" /etc/nginx/sites-available/track
 sed -i "s/PHPVERSION/${PHPVER}/" /etc/nginx/sites-available/tracker
 rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
-sed -i "s/localhost/$SITEHTTP/" /etc/nginx/sites-available/tracker
+sed -i "s/localhost/${SITEHTTP}/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=`cat /proc/cpuinfo | grep processor | wc -l`
-CORES=`expr 2 \* $CORES`
+CORES=`expr 2 \* ${CORES}`
 sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
-echo -e "${RED}Adding $SUDO_USER to the www-data group.$CLEAR"
-usermod -a -G www-data $SUDO_USER
-usermod -a -G $SUDO_USER www-data
-if getent group www-data | grep &>/dev/null "\b${SUDO_USER}\b"; then
-    echo -e "${GREEN}$SUDO_USER is a member the www-data group.$CLEAR"
+echo -e "${RED}Adding ${user} to the www-data group.$CLEAR"
+usermod -a -G www-data ${user}
+usermod -a -G ${user} www-data
+if getent group www-data | grep &>/dev/null "\b${user}\b"; then
+    echo -e "${GREEN}${user} is a member the www-data group.$CLEAR"
 else
     echo -e "${RED}Please logout/login and restart this script.$CLEAR"
     exit
@@ -267,27 +265,30 @@ sed -i 's/;listen.backlog =.*$/listen.backlog = 65535/' /etc/php/${PHPVER}/fpm/p
 sed -i 's/pm = dynamic/pm = static/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/pm.max_children = 5/pm.max_children = 50/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 
-if [[ "$MEMCACHED" = true ]]; then
+usermod -a -G www-data ${user}
+usermod -a -G ${user} www-data
+
+if [[ "$MEMCACHED" == true ]]; then
     apt-get -yqq install php-memcached memcached
     usermod -a -G memcache www-data
     usermod -a -G www-data memcache
-    usermod -a -G memcache $USER
-    usermod -a -G $USER memcache
+    usermod -a -G memcache ${user}
+    usermod -a -G ${user} memcache
 fi
 
-if [[ "$REDIS" = true ]]; then
+if [[ "$REDIS" == true ]]; then
     apt-get -yqq install php-redis redis-server
     usermod -a -G redis www-data
     usermod -a -G www-data redis
-    usermod -a -G redis $USER
-    usermod -a -G $USER redis
+    usermod -a -G redis ${user}
+    usermod -a -G ${user} redis
 fi
 
-if [[ "$APCU" = true ]]; then
+if [[ "$APCU" == true ]]; then
     apt-get -yqq install php-apcu
 fi
 
-if [[ "$GOACCESS" = true ]]; then
+if [[ "$GOACCESS" == true ]]; then
     echo "deb http://deb.goaccess.io/ $(lsb_release -cs) main" | tee -a /etc/apt/sources.list.d/goaccess.list
     wget -O - https://deb.goaccess.io/gnugpg.key | apt-key add -
     apt-get -yqq update
@@ -303,19 +304,19 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing other, mostly needed, apps...\n\n$CLEAR"
 apt-get -yqq install unzip htop tmux rar unrar jpegoptim optipng pngquant gifsicle imagemagick
-wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tmux.conf -O $USER_HOME/.tmux.conf
-wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/bashrc -O $USER_HOME/.bashrc
-sed -i -e "s/PHPVERSION/${PHPVER}/" $USER_HOME/.bashrc
-cp /etc/nanorc $USER_HOME/.nanorc
-sed -i -e 's/^# include/include/' $USER_HOME/.nanorc
-sed -i -e 's/^# set tabsize 8/set tabsize 4/' $USER_HOME/.nanorc
-sed -i -e 's/^# set historylog/set historylog/' $USER_HOME/.nanorc
-sed -i -e 's/^# set tabstospaces/set tabstospaces/' $USER_HOME/.nanorc
-chown $SUDO_USER:$SUDO_USER $USER_HOME/.tmux.conf
-chown $SUDO_USER:$SUDO_USER $USER_HOME/.bashrc
-chown $SUDO_USER:$SUDO_USER $USER_HOME/.nanorc
-ln -sf $USER_HOME/.nanorc /root/
-ln -sf $USER_HOME/.bashrc /root/
+wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/tmux.conf -O ${USER_HOME}/.tmux.conf
+wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/bashrc -O ${USER_HOME}/.bashrc
+sed -i -e "s/PHPVERSION/${PHPVER}/" ${USER_HOME}/.bashrc
+cp /etc/nanorc ${USER_HOME}/.nanorc
+sed -i -e 's/^# include/include/' ${USER_HOME}/.nanorc
+sed -i -e 's/^# set tabsize 8/set tabsize 4/' ${USER_HOME}/.nanorc
+sed -i -e 's/^# set historylog/set historylog/' ${USER_HOME}/.nanorc
+sed -i -e 's/^# set tabstospaces/set tabstospaces/' ${USER_HOME}/.nanorc
+chown ${user}:${user} ${USER_HOME}/.tmux.conf
+chown ${user}:${user} ${USER_HOME}/.bashrc
+chown ${user}:${user} ${USER_HOME}/.nanorc
+ln -sf ${USER_HOME}/.nanorc /root/
+ln -sf ${USER_HOME}/.bashrc /root/
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -326,15 +327,42 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing composer...\n\n$CLEAR"
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-php composer-setup.php
-php -r "unlink('composer-setup.php');"
-mkdir -p $USER_HOME/bin/
-mv $USER_HOME/composer.phar $USER_HOME/bin/composer
-chown $SUDO_USER:$SUDO_USER $USER_HOME/.composer
-chown $SUDO_USER:$SUDO_USER $USER_HOME/bin
-source $USER_HOME/.bashrc
+wget https://raw.githubusercontent.com/composer/getcomposer.org/3c21a2c1affd88dd3fec6251e91a53e440bc2198/web/installer -O - -q | php -- --quiet
+mkdir -p ${USER_HOME}/bin/
+mv ${USER_HOME}/composer.phar ${USER_HOME}/bin/composer
+chown ${user}:${user} ${USER_HOME}/.composer
+chown ${user}:${user} ${USER_HOME}/bin
+source ${USER_HOME}/.bashrc
+
+clear
+echo -e "${RED}In the next screen, please copy and paste this into the editor, then save and close it:$CLEAR"
+echo -e "${GREEN}[Service]
+  LimitNOFILE = 200000 $CLEAR"
+read -p "press enter to continue"
+systemctl edit mysql
+if grep -q 'Maximum Socket Receive Buffer' /etc/sysctl.conf; then
+    echo -e "${GREEN}/etc/sysctl.conf does not need editing.$CLEAR"
+else
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/sysctl.conf -O ${USER_HOME}/temp.conf
+    cat ${USER_HOME}/temp.conf >> /etc/sysctl.conf
+    rm ${USER_HOME}/temp.conf
+fi
+if grep -q 'root soft     nproc          200000' /etc/security/limits.conf; then
+    echo -e "${GREEN}/etc/security/limits.conf does not need editing.$CLEAR"
+else
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/limits.conf -O ${USER_HOME}/temp.conf
+    cat ${USER_HOME}/temp.conf >> /etc/security/limits.conf
+    rm ${USER_HOME}/temp.conf
+fi
+
+if grep -q 'session required pam_limits.so' /etc/pam.d/common-session; then
+    echo -e "${GREEN}/etc/security/limits.conf does not need editing.$CLEAR"
+else
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/session.conf -O ${USER_HOME}/temp.conf
+    cat ${USER_HOME}/temp.conf >> /etc/pam.d/common-session
+    rm ${USER_HOME}/temp.conf
+fi
+
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
 echo -e "${GREEN}Updated your system.$CLEAR"
@@ -358,16 +386,16 @@ echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now we download the Pu-239 Source Code into $PATHTOINSTALL...\n\n$CLEAR"
-rm -fr $PATHTOINSTALL
-git clone https://github.com/darkalchemy/Pu-239.git $PATHTOINSTALL
+rm -fr ${PATHTOINSTALL}
+git clone https://github.com/darkalchemy/Pu-239.git ${PATHTOINSTALL}
 service mysql restart
 service php${PHPVER}-fpm restart
 service nginx restart
-cd $PATHTOINSTALL
-chown -R $SUDO_USER:www-data $PATHTOINSTALL
-sudo -u $SUDO_USER $USER_HOME/bin/composer install --no-scripts --no-progress --no-suggest --optimize-autoloader
-sudo -u $SUDO_USER npm install
-chown -R www-data:www-data $PATHTOINSTALL
+cd ${PATHTOINSTALL}
+chown -R ${user}:www-data ${PATHTOINSTALL}
+sudo -u ${user} ${USER_HOME}/bin/composer install --no-scripts --no-progress --no-suggest --optimize-autoloader
+sudo -u ${user} npm install
+chown -R www-data:www-data ${PATHTOINSTALL}
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -381,7 +409,7 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing your site.$CLEAR"
-php bin/install.php install "$SITENAME" "$SITEHTTP" "$SITESSL" "$DBNAME" "$USERNAME" "$DBPASS" "$BOTNAME" "$SITEEMAIL" "$ADMINUSERNAME" "$ADMINPASS" "$ADMINEMAIL"
+php bin/install.php install "${SITENAME}" "${SITEHTTP}" "${SITESSL}" "${DBNAME}" "${USERNAME}" "${DBPASS}" "${BOTNAME}" "${SITEEMAIL}" "${ADMINUSERNAME}" "${ADMINPASS}" "${ADMINEMAIL}"
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -395,8 +423,8 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
-echo -e "${YELLOW}Creating, merging, minifying and gzipping css and js files.$CLEAR"
-cd $PATHTOINSTALL
+echo -e "${YELLOW}Creating, merging, minifying and gzipping css/js files.$CLEAR"
+cd ${PATHTOINSTALL}
 php bin/uglify.php
 
 clear
@@ -410,10 +438,10 @@ echo -e "${GREEN}Installed composer.$CLEAR"
 echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
-echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
+echo -e "${GREEN}Created, merged, minified and gzipped css/js files.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Setting correct permissions and ownership.$CLEAR"
-chown -R $SUDO_USER:www-data $PATHTOINSTALL
+chown -R ${user}:www-data ${PATHTOINSTALL}
 php bin/set_perms.php
 
 clear
@@ -428,64 +456,22 @@ echo -e "${GREEN}Installed Node.js.$CLEAR"
 echo -e "${GREEN}Downloaded the Pu-239 Source Code into $PATHTOINSTALL.$CLEAR"
 echo -e "${GREEN}Site installation completed.$CLEAR"
 echo -e "${GREEN}Imported trivia, tvmaze and images databases.$CLEAR"
-echo -e "${GREEN}Created, merged, minified and gzipped css and js files.$CLEAR"
+echo -e "${GREEN}Created, merged, minified and gzipped css/js files.$CLEAR"
 echo -e "${GREEN}Set correct permissions and ownership.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 
 ## Delete site cache, probably owned by root
-rm -r /dev/shm/$DBNAME
-
-clear
-echo -e "${RED}In the next screen, please copy and paste this into the editor, then save and close it:$CLEAR"
-echo -e "${GREEN}[Service]
-  LimitNOFILE = 200000 $CLEAR"
-read -p "press enter to continue"
-systemctl edit mysql
-if grep -q 'Maximum Socket Receive Buffer' /etc/sysctl.conf; then
-    echo -e "${GREEN}/etc/sysctl.conf does not need editing.$CLEAR"
-else
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/sysctl.conf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/sysctl.conf
-    rm $USER_HOME/temp.conf
-fi
-if grep -q 'root soft     nproc          200000' /etc/security/limits.conf; then
-    echo -e "${GREEN}/etc/security/limits.conf does not need editing.$CLEAR"
-else
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/limits.conf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/security/limits.conf
-    rm $USER_HOME/temp.conf
-fi
-
-if grep -q 'session required pam_limits.so' /etc/pam.d/common-session; then
-    echo -e "${GREEN}/etc/security/limits.conf does not need editing.$CLEAR"
-else
-    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/session.conf -O $USER_HOME/temp.conf
-    cat $USER_HOME/temp.conf >> /etc/pam.d/common-session
-    rm $USER_HOME/temp.conf
+if [ -d "/dev/shm/${DBNAME}" ]; then
+    rm -r /dev/shm/${DBNAME}
 fi
 
 clear
 echo -e "${GREEN}The installation of Pu-239 completed successfully.$CLEAR"
 echo -e "${GREEN}You should reboot this server to enable the system settings that have been changed.$CLEAR"
-echo -e "${GREEN}The cleanup scripts require an addition to crontab as listed below:$CLEAR"
+echo -e "${GREEN}The cleanup scripts require an addition to root crontab as listed below:$CLEAR"
 
 echo -e "${RED}# add cron job to root cron for running cleanup
 ${GREEN}sudo crontab -e
-
-${RED}### Use this if you DO NOT need any logging for these scripts
-${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data.$CLEAR
-* * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >/dev/null 2>&1
-
-${GREEN}# this can take several minutes to run, especially the first time, so we run it separate
-${GREEN}# runs images_update.php every 30 minutes, if not already running, as user www-data.$CLEAR
-*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >/dev/null 2>&1
-
-${RED}### Use this if you DO need any logging for these scripts
-${GREEN}# runs cron_controller.php every minute, if not already running, as user www-data.$CLEAR
-* * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/cron_controller.php\" >> /var/log/nginx/cron_\`date +\%Y\%m\%d\`.log 2>&1
-
-${GREEN}# this can take several minutes to run, especially the first time, so we run it separate
-${GREEN}# runs images_update.php every 30 minutes, if not already running, as user www-data.$CLEAR
-*/30 * * * * su www-data -s /bin/bash -c \"/usr/bin/php ${PATHTOINSTALL}/include/images_update.php\" >> /var/log/nginx/images_\`date +\%Y\%m\%d\`.log 2>&1
+${GREEN}# runs jobby.php every minute, if not already running
+* * * * * cd /var/www/Pu-239/bin/ && /usr/bin/php jobby.php 1>> /dev/null 2>&1
 $CLEAR"
-
