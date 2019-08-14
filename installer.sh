@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=1.2
+VERSION=1.21
 set -e
 #CONFIG - these must be set
 SITENAME=''         # the name that will be displayed throughout your site as the site name
@@ -335,11 +335,12 @@ chown ${user}:${user} ${USER_HOME}/bin
 source ${USER_HOME}/.bashrc
 
 clear
-echo -e "${RED}In the next screen, please copy and paste this into the editor, then save and close it:$CLEAR"
-echo -e "${GREEN}[Service]
-  LimitNOFILE = 200000 $CLEAR"
-read -p "press enter to continue"
-systemctl edit mysql
+if [ ! -f /etc/systemd/system/mysql.service.d/override.conf ]; then
+    wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/override.conf -O ${USER_HOME}/temp.conf
+    mkdir -p /etc/systemd/system/mysql.service.d/
+    cat ${USER_HOME}/temp.conf >> /etc/systemd/system/mysql.service.d/override.conf
+    rm ${USER_HOME}/temp.conf
+fi
 if grep -q 'Maximum Socket Receive Buffer' /etc/sysctl.conf; then
     echo -e "${GREEN}/etc/sysctl.conf does not need editing.$CLEAR"
 else
