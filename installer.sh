@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=1.21
+VERSION=1.22
 set -e
 #CONFIG - these must be set
 SITENAME=''         # the name that will be displayed throughout your site as the site name
@@ -328,10 +328,8 @@ echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing composer...\n\n$CLEAR"
 wget https://raw.githubusercontent.com/composer/getcomposer.org/3c21a2c1affd88dd3fec6251e91a53e440bc2198/web/installer -O - -q | php -- --quiet
-mkdir -p ${USER_HOME}/bin/
+mv composer.phar /usr/local/bin/composer
 mv ${USER_HOME}/composer.phar ${USER_HOME}/bin/composer
-chown ${user}:${user} ${USER_HOME}/.composer
-chown ${user}:${user} ${USER_HOME}/bin
 source ${USER_HOME}/.bashrc
 
 clear
@@ -476,3 +474,5 @@ ${GREEN}sudo crontab -e
 ${GREEN}# runs jobby.php every minute, if not already running
 * * * * * cd /var/www/Pu-239/bin/ && /usr/bin/php jobby.php 1>> /dev/null 2>&1
 $CLEAR"
+
+echo -e "${GREEN}After rebooting the server, open your browser to http://{$SITEHTTP}/login.php and sign in using the admin email/password.$CLEAR"
