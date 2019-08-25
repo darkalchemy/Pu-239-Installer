@@ -327,9 +327,7 @@ echo -e "${GREEN}Installed PHP, PHP-FPM.$CLEAR"
 echo -e "${GREEN}Installed other, mostly needed, apps.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing composer...\n\n$CLEAR"
-wget https://raw.githubusercontent.com/composer/getcomposer.org/3c21a2c1affd88dd3fec6251e91a53e440bc2198/web/installer -O - -q | php -- --quiet
-mv composer.phar /usr/local/bin/composer
-mv ${USER_HOME}/composer.phar ${USER_HOME}/bin/composer
+wget https://raw.githubusercontent.com/composer/getcomposer.org/3c21a2c1affd88dd3fec6251e91a53e440bc2198/web/installer -O - -q | sudo php -- --install-dir=/usr/local/bin --filename=composer --quiet
 source ${USER_HOME}/.bashrc
 
 clear
