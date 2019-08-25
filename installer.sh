@@ -473,4 +473,4 @@ ${GREEN}# runs jobby.php every minute, if not already running
 * * * * * cd /var/www/Pu-239/bin/ && /usr/bin/php jobby.php 1>> /dev/null 2>&1
 $CLEAR"
 
-echo -e "${GREEN}After rebooting the server, open your browser to http://{$SITEHTTP}/login.php and sign in using the admin email/password.$CLEAR"
+echo -e "${GREEN}After rebooting the server, open your browser to http://$SITEHTTP/login.php and sign in using the admin email/password.$CLEAR"
