@@ -165,7 +165,7 @@ echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Updating your system before we begin...\n\n$CLEAR"
 apt-get -yqq update
 apt-get -yqq upgrade
-apt-get install -yqq git net-tools
+apt-get install -yqq git net-tools gettext
 
 clear
 echo -e "${GREEN}Installed PPA's.$CLEAR"
@@ -259,7 +259,7 @@ echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
-apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip
+apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip php${PHPVER}-intl
 sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/;listen.backlog =.*$/listen.backlog = 65535/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/pm = dynamic/pm = static/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
