@@ -85,9 +85,9 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-alias ll='ls -alFh'
-alias la='ls -A'
-alias l='ls -CF'
+alias ll='ls -alFhN'
+alias la='ls -AN'
+alias l='ls -CFN'
 alias reload='source ~/.bashrc'
 alias flush='echo "flush_all" | nc localhost 11211'
 alias services='sudo service phpPHPVERSION-fpm restart; sudo service nginx restart'
