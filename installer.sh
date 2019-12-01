@@ -16,7 +16,7 @@ ADMINUSERNAME=''                # your first users username
 ADMINPASS=''                    # your first users password
 ADMINEMAIL=''                   # your first users email
 PATHTOINSTALL='/var/www/master' # the path to install Pu-239 into, this path with be removed, if it already exists
-PHPVER='7.3'                    # only 7.3
+PHPVER='7.4'                    # only 7.4
 MEMCACHED=false                 # install memcached true/false
 REDIS=false                     # install redis-server true/false
 APCU=false                      # install APCu true/false
@@ -118,7 +118,7 @@ if [[ "${PATHTOINSTALL}" == "" ]]; then
 fi
 
 if [[ ${PHPVER} == "" ]]; then
-  PHPVER='7.3'
+  PHPVER='7.4'
 fi
 
 if [[ ${MEMCACHED} != true ]]; then
@@ -262,7 +262,7 @@ echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
-apt-get -yqq install php${PHPVER} php${PHPVER}-fpm php${PHPVER}-dev php${PHPVER}-curl php${PHPVER}-json php${PHPVER}-mysql php-imagick php${PHPVER}-bz2 php${PHPVER}-common php${PHPVER}-xml php${PHPVER}-gd php${PHPVER}-mbstring php${PHPVER}-zip php${PHPVER}-intl
+apt-get -yqq install php${PHPVER} php${PHPVER}-{fpm,dev,curl,json,bz2,common,xml,gd,mbstring,zip,intl,mysql} php-imagick
 sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/;listen.backlog =.*$/listen.backlog = 65535/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/pm = dynamic/pm = static/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
