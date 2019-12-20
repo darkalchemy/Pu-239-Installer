@@ -1,7 +1,7 @@
 Pu-239 Installer
 ==============
 
-A simple bash script to install Pu-239, Percona XtraDB 8.0 or MariaDB 10.4, PHP7.3-FPM, nginx and all of their dependencies.  
+A simple bash script to install Pu-239, Percona XtraDB 8.0 or MariaDB 10.4, PHP7.4-FPM, nginx and all of their dependencies.  
 If chosen, redis, memcached, APCu and GoAccess can be installed.
 This script has been tested on Ubuntu 16.04 LTS and Ubuntu 18.04 LTS.
 
