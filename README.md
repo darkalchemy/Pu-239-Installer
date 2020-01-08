@@ -1,4 +1,4 @@
-Pu-239 Installer - No longer being developed
+Pu-239 Installer
 ==============
 
 A simple bash script to install Pu-239, Percona XtraDB 8.0 or MariaDB 10.4, PHP7.4-FPM, nginx and all of their dependencies.  
