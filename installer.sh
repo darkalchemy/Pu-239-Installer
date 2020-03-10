@@ -181,7 +181,7 @@ export DEBIAN_FRONTEND=noninteractive
 if [[ ${DBFLAVOR} == 'Percona' ]]; then
   apt-get install -yqq percona-server-server percona-toolkit
   wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O "${USER_HOME}/temp.conf"
-  cat "${USER_HOME}/temp.conf" >>/etc/mysql/mysql.conf.d/mysqld.cnf
+  cat "${USER_HOME}/temp.conf" >>/etc/mysql/percona-server.conf.d/mysqld.cnf
   rm "${USER_HOME}/temp.conf"
   clear
   unset DEBIAN_FRONTEND
