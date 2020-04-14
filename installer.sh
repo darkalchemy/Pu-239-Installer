@@ -181,7 +181,13 @@ export DEBIAN_FRONTEND=noninteractive
 if [[ ${DBFLAVOR} == 'Percona' ]]; then
   apt-get install -yqq percona-server-server percona-toolkit
   wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O "${USER_HOME}/temp.conf"
-  cat "${USER_HOME}/temp.conf" >>/etc/mysql/percona-server.conf.d/mysqld.cnf
+  if [ -d "/etc/mysql/percona-server.conf.d/" ]; then
+    cat "${USER_HOME}/temp.conf" >> /etc/mysql/percona-server.conf.d/mysqld.cnf
+  elif [ -d "/etc/mysql/mysql.conf.d/" ]; then
+    cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+  else
+    cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysqld.cnf
+  fi
   rm "${USER_HOME}/temp.conf"
   clear
   unset DEBIAN_FRONTEND
@@ -190,13 +196,7 @@ if [[ ${DBFLAVOR} == 'Percona' ]]; then
 elif [[ ${DBFLAVOR} == 'MariaDB' ]]; then
   apt-get install -yqq mariadb-server
   wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O "${USER_HOME}/temp.conf"
-  if [ -d "/etc/mysql/percona-server.conf.d/" ]; then
-    cat "${USER_HOME}/temp.conf" >> /etc/mysql/percona-server.conf.d/mysqld.cnf
-  elif [ -d "/etc/mysql/mysql.conf.d/" ]; then
-    cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysql.conf.d/mysqld.cnf
-  else
-    cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysqld.cnf
-  fi
+  cat "${USER_HOME}/temp.conf" >>/etc/mysql/mariadb.cnf
   rm "${USER_HOME}/temp.conf"
   unset DEBIAN_FRONTEND
   clear
@@ -269,7 +269,7 @@ echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
 apt-get -yqq install php${PHPVER} php${PHPVER}-{fpm,dev,curl,json,bz2,common,xml,gd,mbstring,zip,intl,mysql} php-imagick
-sed -i 's/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
+sed -i "s/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/" /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/;listen.backlog =.*$/listen.backlog = 65535/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/pm = dynamic/pm = static/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/pm.max_children = 5/pm.max_children = 50/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
