@@ -191,11 +191,11 @@ elif [[ ${DBFLAVOR} == 'MariaDB' ]]; then
   apt-get install -yqq mariadb-server
   wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O "${USER_HOME}/temp.conf"
   if [ -d "/etc/mysql/percona-server.conf.d/" ]; then
-    cat "${USER_HOME}/temp.conf" > /etc/mysql/percona-server.conf.d/mysqld.cnf
+    cat "${USER_HOME}/temp.conf" >> /etc/mysql/percona-server.conf.d/mysqld.cnf
   elif [ 'd "/etc/mysql/mysql.conf.d/" ]; then
-    cat "${USER_HOME}/temp.conf" > /etc/mysql/mysql.conf.d/mysqld.cnf
+    cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysql.conf.d/mysqld.cnf
   else
-    cat "${USER_HOME}/temp.conf" > /etc/mysql/mysqld.cnf
+    cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysqld.cnf
   fi
   rm "${USER_HOME}/temp.conf"
   unset DEBIAN_FRONTEND
