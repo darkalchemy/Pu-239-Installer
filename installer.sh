@@ -192,7 +192,7 @@ elif [[ ${DBFLAVOR} == 'MariaDB' ]]; then
   wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/mysql.cnf -O "${USER_HOME}/temp.conf"
   if [ -d "/etc/mysql/percona-server.conf.d/" ]; then
     cat "${USER_HOME}/temp.conf" >> /etc/mysql/percona-server.conf.d/mysqld.cnf
-  elif [ 'd "/etc/mysql/mysql.conf.d/" ]; then
+  elif [ -d "/etc/mysql/mysql.conf.d/" ]; then
     cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysql.conf.d/mysqld.cnf
   else
     cat "${USER_HOME}/temp.conf" >> /etc/mysql/mysqld.cnf
@@ -249,8 +249,8 @@ ln -sf /etc/nginx/sites-available/tracker /etc/nginx/sites-enabled/
 sed -i "s/localhost/${SITEHTTP}/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=$(cat /proc/cpuinfo | grep -c processor)
-CORES=$((2 * $CORES))
-sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
+CORES=$((2 * CORES))
+sed -i "s/^worker_processes.*$/worker_processes CORES;/" /etc/nginx/nginx.conf
 echo -e "${RED}Adding ${user} to the www-data group.$CLEAR"
 usermod -a -G www-data "${user}"
 usermod -a -G "${user}" www-data
