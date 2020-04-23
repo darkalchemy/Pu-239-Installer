@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## VERSION=1.23
+## VERSION=1.24
 set -e
 #CONFIG - these must be set
 SITENAME=''                     # the name that will be displayed throughout your site as the site name
@@ -250,7 +250,7 @@ sed -i "s/localhost/${SITEHTTP}/" /etc/nginx/sites-available/tracker
 wget --no-check-certificate https://raw.githubusercontent.com/darkalchemy/Pu-239-Installer/master/config/nginx.conf -O /etc/nginx/nginx.conf
 CORES=$(cat /proc/cpuinfo | grep -c processor)
 CORES=$((2 * CORES))
-sed -i "s/^worker_processes.*$/worker_processes CORES;/" /etc/nginx/nginx.conf
+sed -i "s/^worker_processes.*$/worker_processes $CORES;/" /etc/nginx/nginx.conf
 echo -e "${RED}Adding ${user} to the www-data group.$CLEAR"
 usermod -a -G www-data "${user}"
 usermod -a -G "${user}" www-data
@@ -392,6 +392,7 @@ echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Now we download the Pu-239 Source Code into $PATHTOINSTALL...\n\n$CLEAR"
 rm -fr "${PATHTOINSTALL}"
 git clone https://github.com/darkalchemy/Pu-239.git "${PATHTOINSTALL}"
+systemctl daemon-reload
 service mysql restart
 service php${PHPVER}-fpm restart
 service nginx restart
