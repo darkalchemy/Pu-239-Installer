@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## VERSION=1.24
+## VERSION=1.25
 set -e
 #CONFIG - these must be set
 SITENAME=''                     # the name that will be displayed throughout your site as the site name
@@ -478,7 +478,7 @@ echo -e "${GREEN}The cleanup scripts require an addition to root crontab as list
 echo -e "${RED}# add cron job to root cron for running cleanup
 ${GREEN}sudo crontab -e
 ${GREEN}# runs jobby.php every minute, if not already running
-* * * * * cd \"${PATHTOINSTALL}\" && /usr/bin/php jobby.php 1>> /dev/null 2>&1
+* * * * * cd \"${PATHTOINSTALL}/bin\" && /usr/bin/php jobby.php 1>> /dev/null 2>&1
 $CLEAR"
 
 echo -e "${GREEN}After rebooting the server, open your browser to http://${SITEHTTP}/login.php and sign in using the admin email/password.$CLEAR"
