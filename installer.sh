@@ -22,6 +22,7 @@ REDIS=false                     # install redis-server true/false
 APCU=false                      # install APCu true/false
 DBFLAVOR='Percona'              # install either Percona or MariaDB
 GOACCESS=false                  # install goaccess access log analyzer
+CERTBOT=false                   # install certbot - this does not set up the ssl certificates - run manually, sudo certbot --nginx
 
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
@@ -140,6 +141,11 @@ fi
 if [[ ${GOACCESS} != true ]]; then
   GOACCESS=false
 fi
+
+if [[ ${CERTBOT} != true ]]; then
+  CERTBOT=false
+fi
+
 
 clear
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
@@ -302,6 +308,10 @@ if [[ "$GOACCESS" == true ]]; then
   wget -O - https://deb.goaccess.io/gnugpg.key | apt-key add -
   apt-get -yqq update
   apt-get -yqq install goaccess
+fi
+
+if [[ "$CERTBOT" == true ]]; then
+  apt-get -yqq install certbot python3-certbot-nginx
 fi
 
 clear
