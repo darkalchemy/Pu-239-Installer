@@ -143,12 +143,12 @@ fi
 
 clear
 echo -e "${YELLOW}Installing PPA's...\n\n$CLEAR"
-apt-get install -yqq software-properties-common curl
+apt-get install -yqq software-properties-common curl gpg-agent build-essential python3 python2 make perl gcc net-tools
 add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:ondrej/php
 add-apt-repository -y ppa:pi-rho/dev
 add-apt-repository -y ppa:git-core/ppa
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_current.x | sudo -E bash -
 if [[ ${DBFLAVOR} == 'Percona' ]]; then
   wget -q "https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb" -O percona-release_latest.deb
   dpkg -i percona-release_latest.deb
