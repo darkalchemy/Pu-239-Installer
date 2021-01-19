@@ -7,10 +7,14 @@ case $- in
     *i*) ;;
       *) return;;
 esac
+#export TERM="xterm-256color"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
+
+# set default editor to nano
+export EDITOR="/bin/nano"
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -47,12 +51,12 @@ esac
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    color_prompt=yes
     else
-	color_prompt=
+    color_prompt=
     fi
 fi
 
@@ -75,7 +79,7 @@ esac
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
+    alias ls='ls --color=auto -N'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
@@ -89,9 +93,19 @@ alias ll='ls -alFhN'
 alias la='ls -AN'
 alias l='ls -CFN'
 alias reload='source ~/.bashrc'
-alias flush='echo "flush_all" | nc localhost 11211'
-alias services='sudo service phpPHPVERSION-fpm restart; sudo service nginx restart'
+alias locked='lsof +L1'
+alias services='sudo service php7.4-fpm restart; sudo service nginx restart'
 alias log='sudo nano /var/log/nginx/error.log'
+alias slow='sudo nano /var/log/mysql/slow.log'
+alias access='sudo nano /var/log/nginx/access.log'
+alias update="sudo apt-fast update"
+alias upgrade="sudo apt-fast upgrade"
+alias dupgrade="sudo apt-fast dist-upgrade"
+alias autoremove="sudo apt-fast autoremove --purge"
+alias purge="sudo apt-get purge"
+alias install="sudo apt-fast install"
+alias search="sudo apt-cache search"
+alias reboot='sudo reboot'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -138,12 +152,33 @@ nc="\e[0m"
 
 upinfo ()
 {
-    echo -ne "${green}`hostname -s` ${red}uptime is: ${cyan} \t\t ";uptime | awk '/up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11,$12}'
+    hname=$(hostname)
+    echo -ne "${green}${hname} ${red}uptime is: ${cyan} \t\t ";uptime | awk '/up/ {print $3,$4,$5,$6,$7,$8,$9,$10,$11,$12}'
+}
+
+function externalip {
+        externalip=$(wget http://ipecho.net/plain -O - -q ; echo)
+        echo " ${externalip}"
 }
 
 function internip0 {
-    internip0=$(/sbin/ifconfig eno1 | grep -E 'inet [0-9]' | grep -v '127.0.0.1' | sed -e 's/addr://' | awk '{ print $2}')
+    internip0=$(/sbin/ifconfig enp2s0 | grep -E 'inet [0-9]' | grep -v '127.0.0.1' | sed -e 's/addr://' | awk '{ print $2}')
     echo " ${internip0}"
+}
+
+function df_root {
+    df_root=$(df -h / | grep / | awk '{ print $4}')
+    echo " ${df_root}"
+}
+
+function ram {
+    ram=$(free -h | grep Mem | awk '{ print $7}')
+    echo " ${ram}"
+}
+
+function swap {
+    swap=$(free -h | grep Swap | awk '{ print $4}')
+    echo " ${swap}"
 }
 
 if [ $(id -u) -eq 0 ]; then
@@ -156,16 +191,17 @@ fi
 clear
 echo -ne "${red}Today is: \t\t\t${cyan}" `date`; echo ""
 echo -e "${red}Kernel Information: \t\t${cyan}" `uname -smr`
-echo -ne "${red}IP: \t\t\t\t${cyan}";internip0""
-echo -ne "${cyan}";upinfo;echo ""
-echo -e "${cyan}"; cal -3; echo ""
+echo -ne "${red}External IP: \t\t\t${cyan}";externalip""
+echo -ne "${red}Local IP:    \t\t\t${cyan}";internip0""
+echo -ne "${red}Root DF:     \t\t\t${cyan}";df_root""
+echo
+echo -ne "${red}Ram Free:    \t\t\t${cyan}";ram""
+echo -ne "${red}Swap Free:   \t\t\t${cyan}";swap""
+
+echo -e "${cyan}";upinfo""
+echo -e "${cyan}"; cal -3;echo ""
 
 # add ~/bin to path
 if [ -d "$HOME/bin" ] ; then
     [[ ":$PATH:" != *":$HOME/bin:"* ]] && PATH="$HOME/bin:${PATH}"
-fi
-
-# add ~/.composer/vendor/bin to path
-if [ -d "$HOME/.composer/vendor/bin" ] ; then
-    [[ ":$PATH:" != *":$HOME/.composer/vendor/bin:"* ]] && PATH="$HOME/.composer/vendor/bin:${PATH}"
 fi
