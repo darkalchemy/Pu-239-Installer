@@ -274,7 +274,7 @@ echo -e "${GREEN}Installed ${DBFLAVOR} Server.$CLEAR"
 echo -e "${GREEN}Installed Nginx.$CLEAR"
 echo -e "${GREEN}Done.$CLEAR"
 echo -e "${YELLOW}Installing PHP, PHP-FPM...\n\n$CLEAR"
-apt-get -yqq install php${PHPVER} php${PHPVER}-{fpm,dev,curl,json,bz2,common,xml,gd,mbstring,zip,intl,mysql} php-imagick
+apt-get -yqq install php${PHPVER} php${PHPVER}-{fpm,dev,curl,json,bz2,common,xml,gd,mbstring,zip,intl,mysql,imagick}
 sed -i "s/;listen =.*$/listen = \/var\/run\/php\/php${PHPVER}-fpm.sock/" /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/;listen.backlog =.*$/listen.backlog = 65535/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
 sed -i 's/pm = dynamic/pm = static/' /etc/php/${PHPVER}/fpm/pool.d/www.conf
