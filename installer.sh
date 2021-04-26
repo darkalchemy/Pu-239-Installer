@@ -408,7 +408,7 @@ service php${PHPVER}-fpm restart
 service nginx restart
 cd "${PATHTOINSTALL}"
 chown -R "${user}":www-data "${PATHTOINSTALL}"
-sudo -u "${user}" /usr/bin/composer install --no-scripts --no-progress --no-suggest --optimize-autoloader
+sudo -u "${user}" /usr/bin/composer install --no-scripts --no-progress --optimize-autoloader
 sudo -u "${user}" /usr/bin/npm install
 chown -R www-data:www-data "${PATHTOINSTALL}"
 
